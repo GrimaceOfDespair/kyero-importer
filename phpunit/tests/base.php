@@ -21,7 +21,7 @@ abstract class WP_Import_UnitTestCase extends WP_UnitTestCase {
 	 * @param bool $fetch_files Whether or not do download remote attachments
 	 */
 	protected function _import_wp( $filename, $users = array(), $fetch_files = true ) {
-		$importer = new WP_Import();
+		$importer = new Kyero_Import();
 		$file     = realpath( $filename );
 
 		$this->assertNotEmpty( $file, 'Path to import file is empty.' );

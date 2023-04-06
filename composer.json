@@ -1,15 +1,15 @@
 {
-    "name": "wordpress/wordpress-importer",
-    "description": "Wordpress plugin to import posts, pages, comments, custom fields, categories, tags and more from a WordPress export file.",
+    "name": "grimaceofdespair/kyero-importer",
+    "description": "Wordpress plugin to import Easy Real Estate properties and images from a Kyero feed.",
     "keywords": [
-        "importer", "wordpress"
+        "importer", "wordpress", "kyero"
     ],
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
-    "homepage": "https://wordpress.org/plugins/wordpress-importer/",
+    "homepage": "https://wordpress.org/plugins/kyero-importer/",
     "support": {
-        "issues": "https://wordpress.org/support/plugin/wordpress-importer/",
-        "source": "https://github.com/WordPress/wordpress-importer"
+        "issues": "https://wordpress.org/support/plugin/kyero-importer/",
+        "source": "https://github.com/GrimaceOfDespair/kyero-importer"
     },
     "require": {
         "php": ">=5.6"

@@ -9,12 +9,12 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 	function set_up() {
 		parent::set_up();
 
-		if ( ! defined( 'WP_IMPORTING' ) ) {
-			define( 'WP_IMPORTING', true );
+		if ( ! defined( 'KYERO_IMPORTING' ) ) {
+			define( 'KYERO_IMPORTING', true );
 		}
 
-		if ( ! defined( 'WP_LOAD_IMPORTERS' ) ) {
-			define( 'WP_LOAD_IMPORTERS', true );
+		if ( ! defined( 'KYERO_LOAD_IMPORTERS' ) ) {
+			define( 'KYERO_LOAD_IMPORTERS', true );
 		}
 
 		add_filter( 'import_allow_create_users', '__return_true' );
@@ -41,7 +41,7 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 			'editor' => false,
 			'author' => false,
 		);
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/small-export.xml', $authors );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/small-export.xml', $authors );
 
 		// Ensure that authors were imported correctly.
 		$user_count = count_users();
@@ -207,8 +207,8 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 			'editor' => false,
 			'author' => false,
 		);
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/small-export.xml', $authors );
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/small-export.xml', $authors );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/small-export.xml', $authors );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/small-export.xml', $authors );
 
 		$user_count = count_users();
 		$this->assertSame( 3, $user_count['total_users'] );
@@ -249,7 +249,7 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 		global $wpdb;
 
 		$authors = array( 'admin' => false );
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/slashes.xml', $authors );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/slashes.xml', $authors );
 
 		$alpha = get_term_by( 'slug', 'alpha', 'category' );
 		$this->assertSame( 'a \"great\" category', $alpha->name );
@@ -278,10 +278,10 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 	/**
 	 * Ensure no PHP 8.1 deprecation notice is thrown when a URL is passed without a path component.
 	 *
-	 * Note: this test doesn't test anything else of the functionality in the `WP_Import::fetch_remote_file()` method!
+	 * Note: this test doesn't test anything else of the functionality in the `Kyero_Import::fetch_remote_file()` method!
 	 */
 	public function test_fetch_remote_file_php81_deprecation() {
-		$importer = new WP_Import();
+		$importer = new Kyero_Import();
 		$result   = $importer->fetch_remote_file( 'https://example.com', array() );
 
 		$this->assertWPError( $result, 'Call to fetch_remote_file() did not return expected WP Error object' );

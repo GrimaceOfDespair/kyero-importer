@@ -9,18 +9,18 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function set_up() {
 		parent::set_up();
 
-		if ( ! defined( 'WP_IMPORTING' ) ) {
-			define( 'WP_IMPORTING', true );
+		if ( ! defined( 'KYERO_IMPORTING' ) ) {
+			define( 'KYERO_IMPORTING', true );
 		}
 
-		if ( ! defined( 'WP_LOAD_IMPORTERS' ) ) {
-			define( 'WP_LOAD_IMPORTERS', true );
+		if ( ! defined( 'KYERO_LOAD_IMPORTERS' ) ) {
+			define( 'KYERO_LOAD_IMPORTERS', true );
 		}
 
 	}
 
 	function test_malformed_wxr() {
-		$file = DIR_TESTDATA_WP_IMPORTER . '/malformed.xml';
+		$file = DIR_TESTDATA_KYERO_IMPORTER . '/malformed.xml';
 
 		// Regex based parser cannot detect malformed XML.
 		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML' ) as $p ) {
@@ -32,8 +32,8 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	}
 
 	function test_invalid_wxr() {
-		$f1 = DIR_TESTDATA_WP_IMPORTER . '/missing-version-tag.xml';
-		$f2 = DIR_TESTDATA_WP_IMPORTER . '/invalid-version-tag.xml';
+		$f1 = DIR_TESTDATA_KYERO_IMPORTER . '/missing-version-tag.xml';
+		$f2 = DIR_TESTDATA_KYERO_IMPORTER . '/invalid-version-tag.xml';
 
 		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			foreach ( array( $f1, $f2 ) as $file ) {
@@ -46,7 +46,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	}
 
 	function test_wxr_version_1_1() {
-		$file = DIR_TESTDATA_WP_IMPORTER . '/valid-wxr-1.1.xml';
+		$file = DIR_TESTDATA_KYERO_IMPORTER . '/valid-wxr-1.1.xml';
 
 		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = $p . ' failed';
@@ -139,7 +139,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	}
 
 	function test_wxr_version_1_0() {
-		$file = DIR_TESTDATA_WP_IMPORTER . '/valid-wxr-1.0.xml';
+		$file = DIR_TESTDATA_KYERO_IMPORTER . '/valid-wxr-1.0.xml';
 
 		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = $p . ' failed';
@@ -228,7 +228,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 
 	// Test that all parsers preserve blank lines in content
 	function test_blank_lines_in_content() {
-		$file = DIR_TESTDATA_WP_IMPORTER . '/post-content-blank-lines.xml';
+		$file = DIR_TESTDATA_KYERO_IMPORTER . '/post-content-blank-lines.xml';
 
 		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = $p . ' failed and is missing blank lines';
@@ -242,7 +242,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 
 	// Tests that each parser detects the same number of terms.
 	function test_varied_taxonomy_term_spacing() {
-		$file = DIR_TESTDATA_WP_IMPORTER . '/term-formats.xml';
+		$file = DIR_TESTDATA_KYERO_IMPORTER . '/term-formats.xml';
 
 		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = $p . ' failed';
@@ -270,7 +270,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	 * @link https://core.trac.wordpress.org/ticket/15203
 	 */
 	function test_escaped_cdata_closing_sequence() {
-		$file = DIR_TESTDATA_WP_IMPORTER . '/crazy-cdata-escaped.xml';
+		$file = DIR_TESTDATA_KYERO_IMPORTER . '/crazy-cdata-escaped.xml';
 
 		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = 'Parser ' . $p;
@@ -303,7 +303,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	 * with "]]>" unescaped within a CDATA section).
 	 */
 	function test_unescaped_cdata_closing_sequence() {
-		$file = DIR_TESTDATA_WP_IMPORTER . '/crazy-cdata.xml';
+		$file = DIR_TESTDATA_KYERO_IMPORTER . '/crazy-cdata.xml';
 
 		$parser = new WXR_Parser_Regex;
 		$result = $parser->parse( $file );
@@ -332,7 +332,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	 * @group term-meta
 	 */
 	function test_term_meta_parsing() {
-		$file = DIR_TESTDATA_WP_IMPORTER . '/test-serialized-term-meta.xml';
+		$file = DIR_TESTDATA_KYERO_IMPORTER . '/test-serialized-term-meta.xml';
 
 		$expected_meta = array(
 			array(
@@ -375,7 +375,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	 * @group comment-meta
 	 */
 	function test_comment_meta_parsing() {
-		$file = DIR_TESTDATA_WP_IMPORTER . '/test-serialized-comment-meta.xml';
+		$file = DIR_TESTDATA_KYERO_IMPORTER . '/test-serialized-comment-meta.xml';
 
 		$expected_meta = array(
 			array(

@@ -10,19 +10,19 @@ class Tests_Import_Term_Meta extends WP_Import_UnitTestCase {
 	function set_up() {
 		parent::set_up();
 
-		if ( ! defined( 'WP_IMPORTING' ) ) {
-			define( 'WP_IMPORTING', true );
+		if ( ! defined( 'KYERO_IMPORTING' ) ) {
+			define( 'KYERO_IMPORTING', true );
 		}
 
-		if ( ! defined( 'WP_LOAD_IMPORTERS' ) ) {
-			define( 'WP_LOAD_IMPORTERS', true );
+		if ( ! defined( 'KYERO_LOAD_IMPORTERS' ) ) {
+			define( 'KYERO_LOAD_IMPORTERS', true );
 		}
 	}
 
 	function test_serialized_term_meta() {
 		register_taxonomy( 'custom_taxonomy', array( 'post' ) );
 
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/test-serialized-term-meta.xml', array( 'admin' => 'admin' ) );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/test-serialized-term-meta.xml', array( 'admin' => 'admin' ) );
 
 		$expected_string = '¯\_(ツ)_/¯';
 		$expected_array  = array( 'key' => '¯\_(ツ)_/¯' );

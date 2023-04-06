@@ -10,25 +10,25 @@ class Tests_Import_Postmeta extends WP_Import_UnitTestCase {
 	function set_up() {
 		parent::set_up();
 
-		if ( ! defined( 'WP_IMPORTING' ) ) {
-			define( 'WP_IMPORTING', true );
+		if ( ! defined( 'KYERO_IMPORTING' ) ) {
+			define( 'KYERO_IMPORTING', true );
 		}
 
-		if ( ! defined( 'WP_LOAD_IMPORTERS' ) ) {
-			define( 'WP_LOAD_IMPORTERS', true );
+		if ( ! defined( 'KYERO_LOAD_IMPORTERS' ) ) {
+			define( 'KYERO_LOAD_IMPORTERS', true );
 		}
 
 	}
 
 	function test_serialized_postmeta_no_cdata() {
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/test-serialized-postmeta-no-cdata.xml', array( 'johncoswell' => 'john' ) );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/test-serialized-postmeta-no-cdata.xml', array( 'johncoswell' => 'john' ) );
 		$expected['special_post_title'] = 'A special title';
 		$expected['is_calendar']        = '';
 		$this->assertSame( $expected, get_post_meta( 122, 'post-options', true ) );
 	}
 
 	function test_utw_postmeta() {
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/test-utw-post-meta-import.xml', array( 'johncoswell' => 'john' ) );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/test-utw-post-meta-import.xml', array( 'johncoswell' => 'john' ) );
 
 		$classy      = new StdClass();
 		$classy->tag = 'album';
@@ -77,7 +77,7 @@ class Tests_Import_Postmeta extends WP_Import_UnitTestCase {
 	 * @ticket 9633
 	 */
 	function test_serialized_postmeta_with_cdata() {
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/test-serialized-postmeta-with-cdata.xml', array( 'johncoswell' => 'johncoswell' ) );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/test-serialized-postmeta-with-cdata.xml', array( 'johncoswell' => 'johncoswell' ) );
 
 		// HTML in the CDATA should work with old WordPress version.
 		$this->assertSame( '<pre>some html</pre>', get_post_meta( 10, 'contains-html', true ) );
@@ -91,7 +91,7 @@ class Tests_Import_Postmeta extends WP_Import_UnitTestCase {
 	 * @ticket 11574
 	 */
 	function test_serialized_postmeta_with_evil_stuff_in_cdata() {
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/test-serialized-postmeta-with-cdata.xml', array( 'johncoswell' => 'johncoswell' ) );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/test-serialized-postmeta-with-cdata.xml', array( 'johncoswell' => 'johncoswell' ) );
 		// Evil content in the CDATA.
 		$this->assertSame( '<wp:meta_value>evil</wp:meta_value>', get_post_meta( 10, 'evil', true ) );
 	}
@@ -100,7 +100,7 @@ class Tests_Import_Postmeta extends WP_Import_UnitTestCase {
 	 * @ticket 11574
 	 */
 	function test_serialized_postmeta_with_slashes() {
-		$this->_import_wp( DIR_TESTDATA_WP_IMPORTER . '/test-serialized-postmeta-with-cdata.xml', array( 'johncoswell' => 'johncoswell' ) );
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/test-serialized-postmeta-with-cdata.xml', array( 'johncoswell' => 'johncoswell' ) );
 
 		$expected_integer      = '1';
 		$expected_string       = '¯\_(ツ)_/¯';

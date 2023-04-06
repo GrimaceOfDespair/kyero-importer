@@ -22,9 +22,9 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 	exit( 1 );
 }
 
-define( 'WP_LOAD_IMPORTERS', true );
+define( 'KYERO_LOAD_IMPORTERS', true );
 
-define( 'DIR_TESTDATA_WP_IMPORTER', dirname( __FILE__ ) . '/data' );
+define( 'DIR_TESTDATA_KYERO_IMPORTER', dirname( __FILE__ ) . '/data' );
 
 // Give access to tests_add_filter() function.
 require_once $_tests_dir . '/includes/functions.php';
@@ -33,8 +33,8 @@ require_once $_tests_dir . '/includes/functions.php';
  * Manually load the importer
  */
 function _manually_load_importer() {
-	if ( ! class_exists( 'WP_Import' ) ) {
-		require dirname( dirname( __FILE__ ) ) . '/src/wordpress-importer.php';
+	if ( ! class_exists( 'Kyero_Import' ) ) {
+		require dirname( dirname( __FILE__ ) ) . '/src/kyero-importer.php';
 	}
 }
 tests_add_filter( 'plugins_loaded', '_manually_load_importer' );
