@@ -2,7 +2,7 @@
 /**
  * Implementation for WordPress functions missing in older WordPress versions.
  *
- * @package WordPress
+ * @package Kyero
  * @subpackage Importer
  */
 

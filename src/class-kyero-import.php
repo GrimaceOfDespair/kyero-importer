@@ -1,8 +1,8 @@
 <?php
 /**
- * WordPress Importer class for managing the import process of a WXR file
+ * Kyero Importer class for managing the import process of a WXR file
  *
- * @package WordPress
+ * @package Kyero
  * @subpackage Importer
  */
 

@@ -2,7 +2,7 @@
 /**
  * WordPress eXtended RSS file parser implementations
  *
- * @package WordPress
+ * @package Kyero
  * @subpackage Importer
  */
 
