@@ -18,6 +18,9 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 		}
 
 		add_filter( 'import_allow_create_users', '__return_true' );
+		register_post_type( 'property', array(
+			'public' => true,
+		));
 
 		global $wpdb;
 		// Crude but effective: make sure there's no residual data in the main tables.
@@ -37,9 +40,14 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 		global $wpdb;
 
 		$authors = array(
-			'admin'  => false,
+			'kyero' => 'admin',
 		);
 		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml', $authors );
+
+		$user_count = count_users();
+		$this->assertSame( 1, $user_count['total_users'] );
+		$admin = get_user_by( 'login', 'admin' );
+		$this->assertSame( 'admin', $admin->user_login );
 
 		// Check that posts/pages were imported correctly.
 		$property_count = wp_count_posts( 'property' );
@@ -50,7 +58,8 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 				'numberposts' => 3,
 				'post_type'   => 'any',
 				'post_status' => 'any',
-				'orderby'     => 'ID',
+				'orderby'     => 'title',
+				'order'       => 'ASC',
 			)
 		);
 		$this->assertCount( 2, $properties );
@@ -62,6 +71,13 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 		$this->assertSame( 'property', $property->post_type );
 		$this->assertSame( 'draft', $property->post_status );
 		$this->assertSame( 0, $property->post_parent );
+
+		$post_meta = get_post_meta( $property->ID );
+		$this->assertSame( 'CBW-510187', $post_meta['REAL_HOMES_property_id'][0] );
+		$this->assertSame( '249500', $post_meta['REAL_HOMES_property_price'][0] );
+		$this->assertSame( '37.8652808,-0.7649835', $post_meta['REAL_HOMES_property_location'][0] );
+		$this->assertSame( '2', $post_meta['REAL_HOMES_property_bedrooms'][0] );
+		$this->assertSame( '2', $post_meta['REAL_HOMES_property_bathrooms'][0] );
 
 		$property = $properties[1];
 		$this->assertSame( 'Commercial in Dehesa de Campoamor', $property->post_title );

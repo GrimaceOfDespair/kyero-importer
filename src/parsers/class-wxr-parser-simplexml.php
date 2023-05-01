@@ -41,15 +41,15 @@ class WXR_Parser_SimpleXML {
 			return new WP_Error( 'SimpleXML_parse_error', __( 'There was an error when reading this WXR file', 'kyero-importer' ), libxml_get_errors() );
 		}
 
-		$wxr_version = $xml->xpath( '/rss/channel/wp:wxr_version' );
+		$wxr_version = $xml->xpath( '/root/kyero/feed_version' );
 		if ( ! $wxr_version ) {
 			return new WP_Error( 'WXR_parse_error', __( 'This does not appear to be a WXR file, missing/invalid WXR version number', 'kyero-importer' ) );
 		}
 
 		$wxr_version = (string) trim( $wxr_version[0] );
 		// confirm that we are dealing with the correct file format
-		if ( ! preg_match( '/^\d+\.\d+$/', $wxr_version ) ) {
-			return new WP_Error( 'WXR_parse_error', __( 'This does not appear to be a WXR file, missing/invalid WXR version number', 'kyero-importer' ) );
+		if ( ! preg_match( '/^\d+(\.\d+)?$/', $wxr_version ) ) {
+			return new WP_Error( 'WXR_parse_error', __( 'bThis does not appear to be a WXR file, missing/invalid WXR version number', 'kyero-importer' ) );
 		}
 
 		$base_url = $xml->xpath( '/rss/channel/wp:base_site_url' );
@@ -70,6 +70,7 @@ class WXR_Parser_SimpleXML {
 			$namespaces['excerpt'] = 'http://wordpress.org/export/1.1/excerpt/';
 		}
 
+		/*
 		// grab authors
 		foreach ( $xml->xpath( '/rss/channel/wp:author' ) as $author_arr ) {
 			$a                 = $author_arr->children( $namespaces['wp'] );
@@ -144,41 +145,115 @@ class WXR_Parser_SimpleXML {
 
 			$terms[] = $term;
 		}
+		*/
 
 		// grab posts
-		foreach ( $xml->channel->item as $item ) {
-			$post = array(
-				'post_title' => (string) $item->title,
-				'guid'       => (string) $item->guid,
+		foreach ( $xml->property as $property ) {
+
+			if ( empty( $property->town ) ) {
+				$title = (string) $property->type;
+			} else {
+				$title = "$property->type in $property->town";
+			}
+
+			$name = sanitize_title($title);
+
+			$decription = '';
+			$descriptions = $content = $property->desc;
+			if ( !empty($descriptions) ) {
+				$decription = $descriptions->en;
+			}
+
+			$location = '';
+			if ( !empty( $property->location ) ) {
+				$property_location = $property->location;
+				$location = "$property_location->latitude,$property_location->longitude";
+			}
+
+			$property_size = '';
+			$lot_size = '';
+			if ( !empty( $property->surface_area ) ) {
+				$property_size = (int) $property->surface_area->build;
+				$lot_size = (int) $property->surface_area->plot;
+			}
+
+			$address = array();
+			if ( !empty( $property->location_detail ) ) {
+				$address[]= (string) $property->location_detail;
+			}
+			if ( !empty( $property->town ) ) {
+				$address[]= (string) $property->town;
+			}
+			if ( !empty( $property->province ) ) {
+				$address[]= (string) $property->province;
+			}
+			if ( !empty( $property->country ) ) {
+				$address[]= (string) $property->country;
+			}
+			$address_text = join( ', ', $address );
+
+			$postmeta = array(
+				array(
+					'key'   => 'REAL_HOMES_property_id',
+					'value' => (string) $property->ref,
+				),
+				array(
+					'key'   => 'REAL_HOMES_property_price',
+					'value' => (string) $property->price,	
+				),
+				array(
+					'key'   => 'REAL_HOMES_property_location',
+					'value' => $location,
+				),
+				array(
+					'key'   => 'REAL_HOMES_property_bedrooms',
+					'value' => (string) $property->beds,
+				),
+				array(
+					'key'   => 'REAL_HOMES_property_bathrooms',
+					'value' => (string) $property->baths,
+				),
+				array(
+					'key'   => 'REAL_HOMES_property_size',
+					'value' => $property_size,
+				),
+				array(
+					'key'   => 'REAL_HOMES_property_lot_size',
+					'value' => $lot_size,
+				),
+				array(
+					'key'   => 'REAL_HOMES_property_address',
+					'value' => $address_text,
+				),
 			);
 
-			$dc                  = $item->children( 'http://purl.org/dc/elements/1.1/' );
-			$post['post_author'] = (string) $dc->creator;
+			$post = array(
+				'post_id'        => (int) $property->id,
+				'post_title'     => $title,
+				'post_name'      => $name,
+				'post_type'      => 'property',
+				'post_date'      => (string) $property->date,
+				'post_date_gmt'  => get_gmt_from_date( $property->date ),
+				'post_author'    => 'kyero',
+				'post_content'   => $content,
+				'post_excerpt'   => wp_trim_excerpt( $decription ),
+				'guid'           => '',
+				'comment_status' => 'closed',
+				'ping_status'    => 'open',
+				'status'         => 'draft',
+				'post_parent'    => null,
+				'menu_order'     => 0,
+				'post_password'  => '',
+				'is_sticky'      => false,
+				'postmeta'       => $postmeta,
+			);
 
-			$content              = $item->children( 'http://purl.org/rss/1.0/modules/content/' );
-			$excerpt              = $item->children( $namespaces['excerpt'] );
-			$post['post_content'] = (string) $content->encoded;
-			$post['post_excerpt'] = (string) $excerpt->encoded;
-
-			$wp                     = $item->children( $namespaces['wp'] );
-			$post['post_id']        = (int) $wp->post_id;
-			$post['post_date']      = (string) $wp->post_date;
-			$post['post_date_gmt']  = (string) $wp->post_date_gmt;
-			$post['comment_status'] = (string) $wp->comment_status;
-			$post['ping_status']    = (string) $wp->ping_status;
-			$post['post_name']      = (string) $wp->post_name;
-			$post['status']         = (string) $wp->status;
-			$post['post_parent']    = (int) $wp->post_parent;
-			$post['menu_order']     = (int) $wp->menu_order;
-			$post['post_type']      = (string) $wp->post_type;
-			$post['post_password']  = (string) $wp->post_password;
-			$post['is_sticky']      = (int) $wp->is_sticky;
-
+			/*
 			if ( isset( $wp->attachment_url ) ) {
 				$post['attachment_url'] = (string) $wp->attachment_url;
 			}
 
-			foreach ( $item->category as $c ) {
+			foreach ( $property->category as $c ) {
 				$att = $c->attributes();
 				if ( isset( $att['nicename'] ) ) {
 					$post['terms'][] = array(
@@ -223,10 +298,10 @@ class WXR_Parser_SimpleXML {
 					'commentmeta'          => $meta,
 				);
 			}
+			*/
 
 			$posts[] = $post;
 		}
-
 		return array(
 			'authors'       => $authors,
 			'posts'         => $posts,
