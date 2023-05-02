@@ -150,13 +150,13 @@ class WXR_Parser_SimpleXML {
 		// grab posts
 		foreach ( $xml->property as $property ) {
 
-			if ( empty( $property->town ) ) {
-				$title = (string) $property->type;
-			} else {
-				$title = "$property->type in $property->town";
-			}
+			$property_type = (string) $property->type;
 
-			$name = sanitize_title($title);
+			if ( empty( $property->town ) ) {
+				$title = $property_type;
+			} else {
+				$title = "$property_type in $property->town";
+			}
 
 			$decription = '';
 			$descriptions = $content = $property->desc;
@@ -227,10 +227,40 @@ class WXR_Parser_SimpleXML {
 				),
 			);
 
+			$property_city = (string) $property->country;
+
+			$terms = array(
+				array(
+					'name'          => $property_type,
+					'slug'          => sanitize_title( $property_type ),
+					'domain'        => 'property-type',
+					'term_name'     => $property_type,
+					'term_taxonomy' => 'property-type',
+				),
+				array(
+					'name'          => $property_city,
+					'slug'          => sanitize_title( $property_city ),
+					'domain'        => 'property-city',
+					'term_name'     => $property_city,
+					'term_taxonomy' => 'property-city',
+				),
+			);
+
+			foreach ( $property->features as $feature ) {
+				$feature_string = (string)$feature;
+				$terms[] = array(
+					'name'   => $feature_string,
+					'slug'   => sanitize_title( $feature_string ),
+					'domain' => 'property-feature',
+					'term_name'     => $feature_string,
+					'term_taxonomy' => 'property-feature',
+				);
+			}
+
 			$post = array(
 				'post_id'        => (int) $property->id,
 				'post_title'     => $title,
-				'post_name'      => $name,
+				'post_name'      => sanitize_title( $title ),
 				'post_type'      => 'property',
 				'post_date'      => (string) $property->date,
 				'post_date_gmt'  => get_gmt_from_date( $property->date ),
@@ -246,6 +276,7 @@ class WXR_Parser_SimpleXML {
 				'post_password'  => '',
 				'is_sticky'      => false,
 				'postmeta'       => $postmeta,
+				'terms'          => $terms,
 			);
 
 			/*
