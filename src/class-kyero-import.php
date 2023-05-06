@@ -94,6 +94,7 @@ class Kyero_Import extends WP_Importer {
 		$this->backfill_parents();
 		$this->backfill_attachment_urls();
 		$this->remap_featured_images();
+		$this->remap_gallery_images();
 
 		$this->import_end();
 	}
@@ -1292,6 +1293,21 @@ class Kyero_Import extends WP_Importer {
 				if ( $new_id != $value ) {
 					update_post_meta( $post_id, '_thumbnail_id', $new_id );
 				}
+			}
+		}
+	}
+
+	/**
+	 * Update REAL_HOMES_property_images meta to new, imported attachment IDs
+	 */
+	function remap_gallery_images() {
+		foreach ( $this->processed_posts as $prev_post_id => $post_id ) {
+
+			$attachments = get_attached_media( 'image', $post_id );
+
+			delete_post_meta( $post_id, 'REAL_HOMES_property_images' );
+			foreach( $attachments as $att_id => $attachment ) {
+				add_post_meta( $post_id, 'REAL_HOMES_property_images', $attachment->ID );
 			}
 		}
 	}
