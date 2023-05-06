@@ -147,6 +147,8 @@ class WXR_Parser_SimpleXML {
 		}
 		*/
 
+		$post_id = $image_id = 1;
+
 		// grab posts
 		foreach ( $xml->property as $property ) {
 
@@ -159,10 +161,11 @@ class WXR_Parser_SimpleXML {
 			}
 
 			$decription = '';
-			$descriptions = $content = $property->desc;
+			$descriptions = $property->desc;
 			if ( !empty($descriptions) ) {
 				$decription = $descriptions->en;
 			}
+			$content = $decription;
 
 			$location = '';
 			if ( !empty( $property->location ) ) {
@@ -173,7 +176,7 @@ class WXR_Parser_SimpleXML {
 			$property_size = '';
 			$lot_size = '';
 			if ( !empty( $property->surface_area ) ) {
-				$property_size = (int) $property->surface_area->build;
+				$property_size = (int) $property->surface_area->built;
 				$lot_size = (int) $property->surface_area->plot;
 			}
 
@@ -246,19 +249,60 @@ class WXR_Parser_SimpleXML {
 				),
 			);
 
-			foreach ( $property->features as $feature ) {
-				$feature_string = (string)$feature;
-				$terms[] = array(
-					'name'   => $feature_string,
-					'slug'   => sanitize_title( $feature_string ),
-					'domain' => 'property-feature',
-					'term_name'     => $feature_string,
-					'term_taxonomy' => 'property-feature',
-				);
+			if ( $property->features ) {
+				foreach ( $property->features->feature as $feature ) {
+					$feature_string = (string) $feature;
+	
+					$terms[] = array(
+						'name'          => $feature_string,
+						'slug'          => sanitize_title( $feature_string ),
+						'domain'        => 'property-feature',
+						'term_name'     => $feature_string,
+						'term_taxonomy' => 'property-feature',
+					);
+				}
 			}
 
-			$post = array(
-				'post_id'        => (int) $property->id,
+			if ( $property->images ) {
+				$image_index = 1;
+				foreach ( $property->images->image as $image ) {
+
+					$image_id++;
+
+					if ( $image_index == 1 ) {
+						$postmeta[] = array(
+							'key' => '_thumbnail_id',
+							'value' => $image_id
+						);
+					}
+
+					$image_title = "Image $image_index for $title";
+					$image_index++;
+					$posts[] = array(
+						'post_id'        => $image_id,
+						'post_title'     => $image_title,
+						'post_name'      => sanitize_title( $image_title ),
+						'post_type'      => 'attachment',
+						'post_date'      => (string) $property->date,
+						'post_date_gmt'  => get_gmt_from_date( $property->date ),
+						'post_author'    => 'kyero',
+						'post_content'   => '',
+						'post_excerpt'   => '',
+						'guid'           => '',
+						'comment_status' => 'closed',
+						'ping_status'    => 'open',
+						'status'         => 'draft',
+						'post_parent'    => $post_id,
+						'menu_order'     => 0,
+						'post_password'  => '',
+						'is_sticky'      => false,
+						'attachment_url' => (string) $image->url,
+					);
+				}
+			}
+
+			$posts[] = array(
+				'post_id'        => $post_id,
 				'post_title'     => $title,
 				'post_name'      => sanitize_title( $title ),
 				'post_type'      => 'property',
@@ -278,6 +322,8 @@ class WXR_Parser_SimpleXML {
 				'postmeta'       => $postmeta,
 				'terms'          => $terms,
 			);
+
+			$post_id = ++$image_id;
 
 			/*
 			if ( isset( $wp->attachment_url ) ) {
@@ -330,8 +376,6 @@ class WXR_Parser_SimpleXML {
 				);
 			}
 			*/
-
-			$posts[] = $post;
 		}
 		return array(
 			'authors'       => $authors,

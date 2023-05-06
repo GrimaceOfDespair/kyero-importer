@@ -60,6 +60,6 @@ function kyero_importer_init() {
 	 */
 	$GLOBALS['kyero_import'] = new Kyero_Import();
 	// phpcs:ignore WordPress.WP.CapitalPDangit
-	register_importer( 'wordpress', 'WordPress', __( 'Import Easy Real Estate <strong>properties and images</strong> from a Kyero feed.', 'kyero-importer' ), array( $GLOBALS['kyero_import'], 'dispatch' ) );
+	register_importer( 'kyero', 'Kyero', __( 'Import Easy Real Estate <strong>properties and images</strong> from a Kyero feed.', 'kyero-importer' ), array( $GLOBALS['kyero_import'], 'dispatch' ) );
 }
 add_action( 'admin_init', 'kyero_importer_init' );

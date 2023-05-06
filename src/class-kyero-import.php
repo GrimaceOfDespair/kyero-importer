@@ -10,7 +10,7 @@
  * WordPress importer class.
  */
 class Kyero_Import extends WP_Importer {
-	var $max_wxr_version = 1.2; // max. supported WXR version
+	var $max_kyero_version = 3; // max. supported WXR version
 
 	var $id; // WXR attachment ID
 
@@ -36,6 +36,7 @@ class Kyero_Import extends WP_Importer {
 	var $fetch_attachments = false;
 	var $url_remap         = array();
 	var $featured_images   = array();
+	var $gallery_images   = array();
 
 	/**
 	 * Registered callback function for the WordPress Importer
@@ -57,7 +58,7 @@ class Kyero_Import extends WP_Importer {
 				}
 				break;
 			case 2:
-				check_admin_referer( 'import-wordpress' );
+				check_admin_referer( 'import-kyero' );
 				$this->fetch_attachments = ( ! empty( $_POST['fetch_attachments'] ) && $this->allow_fetch_attachments() );
 				$this->id                = (int) $_POST['import_id'];
 				$file                    = get_attached_file( $this->id );
@@ -183,9 +184,9 @@ class Kyero_Import extends WP_Importer {
 		}
 
 		$this->version = $import_data['version'];
-		if ( $this->version > $this->max_wxr_version ) {
+		if ( $this->version > $this->max_kyero_version ) {
 			echo '<div class="error"><p><strong>';
-			printf( __( 'This WXR file (version %s) may not be supported by this version of the importer. Please consider updating.', 'kyero-importer' ), esc_html( $import_data['version'] ) );
+			printf( __( 'This Kyero file (version %s) may not be supported by this version of the importer. Please consider updating.', 'kyero-importer' ), esc_html( $import_data['version'] ) );
 			echo '</strong></p></div>';
 		}
 
@@ -233,8 +234,8 @@ class Kyero_Import extends WP_Importer {
 		$j = 0;
 		// phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 		?>
-<form action="<?php echo admin_url( 'admin.php?import=wordpress&amp;step=2' ); ?>" method="post">
-	<?php wp_nonce_field( 'import-wordpress' ); ?>
+<form action="<?php echo admin_url( 'admin.php?import=kyero&amp;step=2' ); ?>" method="post">
+	<?php wp_nonce_field( 'import-kyero' ); ?>
 	<input type="hidden" name="import_id" value="<?php echo $this->id; ?>" />
 
 <?php if ( ! empty( $this->authors ) ) : ?>
@@ -1333,7 +1334,7 @@ class Kyero_Import extends WP_Importer {
 		echo '<div class="narrow">';
 		echo '<p>' . __( 'Howdy! Upload your WordPress eXtended RSS (WXR) file and we&#8217;ll import the posts, pages, comments, custom fields, categories, and tags into this site.', 'kyero-importer' ) . '</p>';
 		echo '<p>' . __( 'Choose a WXR (.xml) file to upload, then click Upload file and import.', 'kyero-importer' ) . '</p>';
-		wp_import_upload_form( 'admin.php?import=wordpress&amp;step=1' );
+		wp_import_upload_form( 'admin.php?import=kyero&amp;step=1' );
 		echo '</div>';
 	}
 
