@@ -14,8 +14,8 @@ class Tests_Import_Postmeta extends WP_Import_UnitTestCase {
 			define( 'KYERO_IMPORTING', true );
 		}
 
-		if ( ! defined( 'KYERO_LOAD_IMPORTERS' ) ) {
-			define( 'KYERO_LOAD_IMPORTERS', true );
+		if ( ! defined( 'WP_LOAD_IMPORTERS' ) ) {
+			define( 'WP_LOAD_IMPORTERS', true );
 		}
 
 	}

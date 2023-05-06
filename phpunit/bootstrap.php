@@ -22,7 +22,7 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 	exit( 1 );
 }
 
-define( 'KYERO_LOAD_IMPORTERS', true );
+define( 'WP_LOAD_IMPORTERS', true );
 
 define( 'DIR_TESTDATA_KYERO_IMPORTER', dirname( __FILE__ ) . '/data' );
 
