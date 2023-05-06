@@ -163,7 +163,7 @@ class WXR_Parser_SimpleXML {
 			$decription = '';
 			$descriptions = $property->desc;
 			if ( !empty($descriptions) ) {
-				$decription = $descriptions->en;
+				$decription = (string) $descriptions->en;
 			}
 			$content = $decription;
 
