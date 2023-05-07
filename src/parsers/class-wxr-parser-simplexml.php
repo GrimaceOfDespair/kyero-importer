@@ -1,15 +1,15 @@
 <?php
 /**
- * WordPress eXtended RSS file parser implementations
+ * WordPress Kyero XML file parser implementations
  *
  * @package Kyero
  * @subpackage Importer
  */
 
 /**
- * WXR Parser that makes use of the SimpleXML PHP extension.
+ * Kyero Parser that makes use of the SimpleXML PHP extension.
  */
-class WXR_Parser_SimpleXML {
+class Kyero_Parser {
 	function parse( $file ) {
 		$authors    = array();
 		$posts      = array();
@@ -221,7 +221,7 @@ class WXR_Parser_SimpleXML {
 						'is_sticky'      => false,
 						'attachment_url' => (string) $image->url,
 					);
-					
+
 					$image_index++;
 				}
 			}

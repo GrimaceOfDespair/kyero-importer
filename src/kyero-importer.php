@@ -39,7 +39,7 @@ require_once dirname( __FILE__ ) . '/compat.php';
 /** WXR_Parser class */
 require_once dirname( __FILE__ ) . '/parsers/class-wxr-parser.php';
 
-/** WXR_Parser_SimpleXML class */
+/** Kyero_Parser class */
 require_once dirname( __FILE__ ) . '/parsers/class-wxr-parser-simplexml.php';
 
 /** WXR_Parser_XML class */

@@ -23,7 +23,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/malformed.xml';
 
 		// Regex based parser cannot detect malformed XML.
-		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML' ) as $p ) {
+		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML' ) as $p ) {
 			$parser = new $p;
 			$result = $parser->parse( $file );
 			$this->assertWPError( $result );
@@ -35,7 +35,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 		$f1 = DIR_TESTDATA_KYERO_IMPORTER . '/missing-version-tag.xml';
 		$f2 = DIR_TESTDATA_KYERO_IMPORTER . '/invalid-version-tag.xml';
 
-		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			foreach ( array( $f1, $f2 ) as $file ) {
 				$parser = new $p;
 				$result = $parser->parse( $file );
@@ -48,7 +48,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_wxr_version_1_1() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/valid-wxr-1.1.xml';
 
-		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = $p . ' failed';
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -141,7 +141,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_wxr_version_1_0() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/valid-wxr-1.0.xml';
 
-		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = $p . ' failed';
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -230,7 +230,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_blank_lines_in_content() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/post-content-blank-lines.xml';
 
-		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = $p . ' failed and is missing blank lines';
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -244,7 +244,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_varied_taxonomy_term_spacing() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/term-formats.xml';
 
-		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = $p . ' failed';
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -272,7 +272,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_escaped_cdata_closing_sequence() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/crazy-cdata-escaped.xml';
 
-		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = 'Parser ' . $p;
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -345,7 +345,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 			),
 		);
 
-		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = 'Parser ' . $p;
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -388,7 +388,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 			),
 		);
 
-		foreach ( array( 'WXR_Parser_SimpleXML', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
 			$message = 'Parser ' . $p;
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
