@@ -39,10 +39,9 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 	function test_kyero_import() {
 		global $wpdb;
 
-		$authors = array(
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml', array(
 			'kyero' => 'admin',
-		);
-		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml', $authors );
+		) );
 
 		$user_count = count_users();
 		$this->assertSame( 1, $user_count['total_users'] );
@@ -55,8 +54,8 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 
 		$properties = get_posts(
 			array(
-				'numberposts' => 3,
-				'post_type'   => 'any',
+				'numberposts' => 10,
+				'post_type'   => 'property',
 				'post_status' => 'any',
 				'orderby'     => 'title',
 				'order'       => 'ASC',
@@ -86,5 +85,45 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 		$this->assertSame( 'property', $property->post_type );
 		$this->assertSame( 'draft', $property->post_status );
 		$this->assertSame( 0, $property->post_parent );
+	}
+
+	function test_kyero_import_twice() {
+		global $wpdb;
+
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml', array(
+			'kyero' => 'admin',
+		) );
+
+		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml', array(
+			'kyero' => 'admin',
+		) );
+
+		// Check that posts/pages were imported correctly.
+		$property_count = wp_count_posts( 'property' );
+		$this->assertSame( '2', $property_count->draft );
+
+		$properties = get_posts(
+			array(
+				'numberposts' => 10,
+				'post_type'   => 'property',
+				'post_status' => 'any',
+				'orderby'     => 'title',
+				'order'       => 'ASC',
+			)
+		);
+		$this->assertCount( 2, $properties );
+
+		$property = $properties[0];
+		$this->assertSame( 'Apartment in Torre de la Horadada', $property->post_title );
+
+		$post_meta = get_post_meta( $property->ID );
+		$this->assertSame( array( 'CBW-510187' ), $post_meta['REAL_HOMES_property_id'] );
+		$this->assertSame( array( '249500' ), $post_meta['REAL_HOMES_property_price'] );
+		$this->assertSame( array( '37.8652808,-0.7649835' ), $post_meta['REAL_HOMES_property_location'] );
+		$this->assertSame( array( '2' ), $post_meta['REAL_HOMES_property_bedrooms'] );
+		$this->assertSame( array( '2' ), $post_meta['REAL_HOMES_property_bathrooms'] );
+
+		$property = $properties[1];
+		$this->assertSame( 'Commercial in Dehesa de Campoamor', $property->post_title );
 	}
 }
