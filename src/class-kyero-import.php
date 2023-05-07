@@ -1319,7 +1319,7 @@ class Kyero_Import extends WP_Importer {
 	 * @return array Information gathered from the WXR file
 	 */
 	function parse( $file ) {
-		$parser = new WXR_Parser();
+		$parser = new Kyero_Parser();
 		return $parser->parse( $file );
 	}
 

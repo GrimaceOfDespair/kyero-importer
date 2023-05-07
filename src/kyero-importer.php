@@ -36,17 +36,8 @@ if ( ! class_exists( 'WP_Importer' ) ) {
 /** Functions missing in older WordPress versions. */
 require_once dirname( __FILE__ ) . '/compat.php';
 
-/** WXR_Parser class */
-require_once dirname( __FILE__ ) . '/parsers/class-wxr-parser.php';
-
 /** Kyero_Parser class */
-require_once dirname( __FILE__ ) . '/parsers/class-wxr-parser-simplexml.php';
-
-/** WXR_Parser_XML class */
-require_once dirname( __FILE__ ) . '/parsers/class-wxr-parser-xml.php';
-
-/** WXR_Parser_Regex class */
-require_once dirname( __FILE__ ) . '/parsers/class-wxr-parser-regex.php';
+require_once dirname( __FILE__ ) . '/parsers/class-kyero-parser.php';
 
 /** Kyero_Import class */
 require_once dirname( __FILE__ ) . '/class-kyero-import.php';
