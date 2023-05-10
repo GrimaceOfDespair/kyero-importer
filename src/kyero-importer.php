@@ -54,3 +54,66 @@ function kyero_importer_init() {
 	register_importer( 'kyero', 'Kyero', __( 'Import Easy Real Estate <strong>properties and images</strong> from a Kyero feed.', 'kyero-importer' ), array( $GLOBALS['kyero_import'], 'dispatch' ) );
 }
 add_action( 'admin_init', 'kyero_importer_init' );
+
+function kyero_post_meta( $postmeta, $post_id, $post ) {
+
+	$property_id =  get_existing_property_id( $post );
+
+	// Skip setting kyero properties on reimport
+	if ( $property_id ) {
+		return array();
+	}
+
+	return $postmeta;
+}
+
+add_filter( 'wp_import_post_meta', 'kyero_post_meta', 10, 3 );
+
+function kyero_property_exists( $post_exists, $post ) {
+
+	return get_existing_property_id( $post );
+}
+
+add_filter( 'wp_import_existing_post', 'kyero_property_exists', 10, 2 );
+
+function get_existing_property_id( $post ) {
+	$kyero_ref = get_kyero_ref( $post );
+
+	if ( $kyero_ref ) {
+
+		$properties = get_posts(
+			array(
+				'numberposts' => 1,
+				'post_type'   => 'property',
+				'post_status' => 'any',
+				'meta_key'    => 'REAL_HOMES_property_id',
+				'meta_value'  => $kyero_ref,
+			)
+		);
+
+		if ( count( $properties ) > 0) {
+
+			$post['postmeta'] = array();
+
+			return $properties[0]->ID;	
+		}
+	}
+
+	return 0;
+}
+
+function get_kyero_ref( $post ) {
+
+	if ( isset( $post['postmeta']) ) {
+
+		$postmeta = $post['postmeta'];
+
+		$index = array_search('REAL_HOMES_property_id', array_column($postmeta, 'key'));
+
+		if ( $index !== false ) {
+			return $postmeta[$index]['value'];
+		}
+	}
+
+	return null;
+}
