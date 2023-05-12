@@ -70,7 +70,8 @@ class Kyero_Parser {
 			$namespaces['excerpt'] = 'http://wordpress.org/export/1.1/excerpt/';
 		}
 
-		$post_id = $image_id = 1;
+		$post_id  = 1;
+		$image_id = 1;
 
 		// grab posts
 		foreach ( $xml->property as $property ) {
@@ -83,38 +84,38 @@ class Kyero_Parser {
 				$title = "$property_type in $property->town";
 			}
 
-			$decription = '';
+			$decription   = '';
 			$descriptions = $property->desc;
-			if ( !empty($descriptions) ) {
+			if ( ! empty( $descriptions ) ) {
 				$decription = (string) $descriptions->en;
 			}
 			$content = $decription;
 
 			$location = '';
-			if ( !empty( $property->location ) ) {
+			if ( ! empty( $property->location ) ) {
 				$property_location = $property->location;
-				$location = "$property_location->latitude,$property_location->longitude";
+				$location          = "$property_location->latitude,$property_location->longitude";
 			}
 
 			$property_size = '';
-			$lot_size = '';
-			if ( !empty( $property->surface_area ) ) {
+			$lot_size      = '';
+			if ( ! empty( $property->surface_area ) ) {
 				$property_size = (int) $property->surface_area->built;
-				$lot_size = (int) $property->surface_area->plot;
+				$lot_size      = (int) $property->surface_area->plot;
 			}
 
 			$address = array();
 			if ( !empty( $property->location_detail ) ) {
-				$address[]= (string) $property->location_detail;
+				$address[] = (string) $property->location_detail;
 			}
 			if ( !empty( $property->town ) ) {
-				$address[]= (string) $property->town;
+				$address[] = (string) $property->town;
 			}
-			if ( !empty( $property->province ) ) {
-				$address[]= (string) $property->province;
+			if ( ! empty( $property->province ) ) {
+				$address[] = (string) $property->province;
 			}
-			if ( !empty( $property->country ) ) {
-				$address[]= (string) $property->country;
+			if ( ! empty( $property->country ) ) {
+				$address[] = (string) $property->country;
 			}
 			$address_text = join( ', ', $address );
 
@@ -194,7 +195,7 @@ class Kyero_Parser {
 
 					if ( $image_index == 1 ) {
 						$postmeta[] = array(
-							'key' => '_thumbnail_id',
+							'key'   => '_thumbnail_id',
 							'value' => $image_id
 						);
 					}
