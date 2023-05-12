@@ -1306,7 +1306,7 @@ class Kyero_Import extends WP_Importer {
 			$attachments = get_attached_media( 'image', $post_id );
 
 			delete_post_meta( $post_id, 'REAL_HOMES_property_images' );
-			foreach( $attachments as $att_id => $attachment ) {
+			foreach ( $attachments as $att_id => $attachment ) {
 				add_post_meta( $post_id, 'REAL_HOMES_property_images', $attachment->ID );
 			}
 		}

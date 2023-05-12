@@ -105,10 +105,10 @@ class Kyero_Parser {
 			}
 
 			$address = array();
-			if ( !empty( $property->location_detail ) ) {
+			if ( ! empty( $property->location_detail ) ) {
 				$address[] = (string) $property->location_detail;
 			}
-			if ( !empty( $property->town ) ) {
+			if ( ! empty( $property->town ) ) {
 				$address[] = (string) $property->town;
 			}
 			if ( ! empty( $property->province ) ) {
@@ -126,7 +126,7 @@ class Kyero_Parser {
 				),
 				array(
 					'key'   => 'REAL_HOMES_property_price',
-					'value' => (string) $property->price,	
+					'value' => (string) $property->price,
 				),
 				array(
 					'key'   => 'REAL_HOMES_property_location',
@@ -176,7 +176,7 @@ class Kyero_Parser {
 			if ( $property->features ) {
 				foreach ( $property->features->feature as $feature ) {
 					$feature_string = (string) $feature;
-	
+
 					$terms[] = array(
 						'name'          => $feature_string,
 						'slug'          => sanitize_title( $feature_string ),
@@ -193,10 +193,10 @@ class Kyero_Parser {
 
 					$image_id++;
 
-					if ( $image_index == 1 ) {
+					if ( 1 === $image_index ) {
 						$postmeta[] = array(
 							'key'   => '_thumbnail_id',
-							'value' => $image_id
+							'value' => $image_id,
 						);
 					}
 
