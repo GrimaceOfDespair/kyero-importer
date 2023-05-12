@@ -18,9 +18,10 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 		}
 
 		add_filter( 'import_allow_create_users', '__return_true' );
-		register_post_type( 'property', array(
-			'public' => true,
-		));
+		register_post_type(
+			'property',
+			array( 'public' => true )
+		);
 
 		global $wpdb;
 		// Crude but effective: make sure there's no residual data in the main tables.
@@ -39,9 +40,10 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 	function test_kyero_import() {
 		global $wpdb;
 
-		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml', array(
-			'kyero' => 'admin',
-		) );
+		$this->_import_wp(
+			DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml',
+			array( 'kyero' => 'admin' )
+		);
 
 		$user_count = count_users();
 		$this->assertSame( 1, $user_count['total_users'] );
@@ -90,13 +92,15 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 	function test_kyero_import_twice() {
 		global $wpdb;
 
-		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml', array(
-			'kyero' => 'admin',
-		) );
+		$this->_import_wp(
+			DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml',
+			array( 'kyero' => 'admin' )
+		);
 
-		$this->_import_wp( DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml', array(
-			'kyero' => 'admin',
-		) );
+		$this->_import_wp(
+			DIR_TESTDATA_KYERO_IMPORTER . '/kyero.xml',
+			array( 'kyero' => 'admin' )
+		);
 
 		// Check that posts/pages were imported correctly.
 		$property_count = wp_count_posts( 'property' );

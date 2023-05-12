@@ -111,7 +111,7 @@ function get_kyero_ref( $post ) {
 		$index = array_search( 'REAL_HOMES_property_id', array_column( $postmeta, 'key' ), true );
 
 		if ( false !== $index ) {
-			return $postmeta[$index]['value'];
+			return $postmeta[ $index ]['value'];
 		}
 	}
 
