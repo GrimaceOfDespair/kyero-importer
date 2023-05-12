@@ -7,7 +7,7 @@
  */
 
 /**
- * WordPress importer class.
+ * Kyero importer class.
  */
 class Kyero_Import extends WP_Importer {
 	var $max_kyero_version = 3; // max. supported WXR version
@@ -39,7 +39,7 @@ class Kyero_Import extends WP_Importer {
 	var $gallery_images    = array();
 
 	/**
-	 * Registered callback function for the WordPress Importer
+	 * Registered callback function for the Kyero Importer
 	 *
 	 * Manages the three separate stages of the WXR import process
 	 */

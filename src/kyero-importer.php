@@ -46,7 +46,7 @@ function kyero_importer_init() {
 	load_plugin_textdomain( 'kyero-importer' );
 
 	/**
-	 * WordPress Importer object for registering the import callback
+	 * Kyero Importer object for registering the import callback
 	 * @global Kyero_Import $kyero_import
 	 */
 	$GLOBALS['kyero_import'] = new Kyero_Import();

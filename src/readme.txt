@@ -1,4 +1,4 @@
-=== WordPress Importer ===
+=== Kyero Importer ===
 Contributors: grimaceofdespair
 Donate link: https://wordpressfoundation.org/donate/
 Tags: importer, wordpress, kyero
@@ -13,17 +13,18 @@ Import Easy Real Estate properties and images from a kyero feed.
 
 == Description ==
 
-The WordPress Importer will import the following content from a Kyero feed:
+The Kyero Importer will import Properties from a Kyero feed into Easy Real Estate.
 
-* Properties
-* Images
+Images are downloaded and attached to the property.
+
+Missing Property Features, Property Types and Property Locations are automatically created.
 
 == Installation ==
 
 The quickest method for installing the importer is:
 
-1. Visit Tools -> Import in the WordPress dashboard
-1. Click on the Kyero link in the list of importers
+1. Visit Plugins -> Add New in the WordPress dashboard
+1. Search for kyero-importer
 1. Click "Install Now"
 1. Finally click "Activate Plugin & Run Importer"
 
