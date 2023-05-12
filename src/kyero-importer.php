@@ -57,7 +57,7 @@ add_action( 'admin_init', 'kyero_importer_init' );
 
 function kyero_post_meta( $postmeta, $post_id, $post ) {
 
-	$property_id =  get_existing_property_id( $post );
+	$property_id = get_existing_property_id( $post );
 
 	// Skip setting kyero properties on reimport
 	if ( $property_id ) {
@@ -91,11 +91,11 @@ function get_existing_property_id( $post ) {
 			)
 		);
 
-		if ( count( $properties ) > 0) {
+		if ( count( $properties ) > 0 ) {
 
 			$post['postmeta'] = array();
 
-			return $properties[0]->ID;	
+			return $properties[0]->ID;
 		}
 	}
 
@@ -104,13 +104,13 @@ function get_existing_property_id( $post ) {
 
 function get_kyero_ref( $post ) {
 
-	if ( isset( $post['postmeta']) ) {
+	if ( isset( $post['postmeta'] ) ) {
 
 		$postmeta = $post['postmeta'];
 
-		$index = array_search('REAL_HOMES_property_id', array_column($postmeta, 'key'));
+		$index = array_search( 'REAL_HOMES_property_id', array_column( $postmeta, 'key' ), true );
 
-		if ( $index !== false ) {
+		if ( false !== $index ) {
 			return $postmeta[$index]['value'];
 		}
 	}
