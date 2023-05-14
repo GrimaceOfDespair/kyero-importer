@@ -1,13 +1,13 @@
 <?php
 /**
- * Kyero Importer class for managing the import process of a WXR file
+ * Import Kyero Feed class for managing the import process of a WXR file
  *
  * @package Kyero
  * @subpackage Importer
  */
 
 /**
- * Kyero importer class.
+ * Import Kyero Feed class.
  */
 class Kyero_Import extends WP_Importer {
 	var $max_kyero_version = 3; // max. supported WXR version
@@ -39,7 +39,7 @@ class Kyero_Import extends WP_Importer {
 	var $gallery_images    = array();
 
 	/**
-	 * Registered callback function for the Kyero Importer
+	 * Registered callback function for the Import Kyero Feed
 	 *
 	 * Manages the three separate stages of the WXR import process
 	 */
@@ -106,8 +106,8 @@ class Kyero_Import extends WP_Importer {
 	 */
 	function import_start( $file ) {
 		if ( ! is_file( $file ) ) {
-			echo '<p><strong>' . __( 'Sorry, there has been an error.', 'kyero-importer' ) . '</strong><br />';
-			echo __( 'The file does not exist, please try again.', 'kyero-importer' ) . '</p>';
+			echo '<p><strong>' . __( 'Sorry, there has been an error.', 'import-kyero-feed' ) . '</strong><br />';
+			echo __( 'The file does not exist, please try again.', 'import-kyero-feed' ) . '</p>';
 			$this->footer();
 			die();
 		}
@@ -115,7 +115,7 @@ class Kyero_Import extends WP_Importer {
 		$import_data = $this->parse( $file );
 
 		if ( is_wp_error( $import_data ) ) {
-			echo '<p><strong>' . __( 'Sorry, there has been an error.', 'kyero-importer' ) . '</strong><br />';
+			echo '<p><strong>' . __( 'Sorry, there has been an error.', 'import-kyero-feed' ) . '</strong><br />';
 			echo esc_html( $import_data->get_error_message() ) . '</p>';
 			$this->footer();
 			die();
@@ -150,7 +150,7 @@ class Kyero_Import extends WP_Importer {
 		wp_defer_term_counting( false );
 		wp_defer_comment_counting( false );
 
-		echo '<p>' . __( 'All done.', 'kyero-importer' ) . ' <a href="' . admin_url() . '">' . __( 'Have fun!', 'kyero-importer' ) . '</a>' . '</p>';
+		echo '<p>' . __( 'All done.', 'import-kyero-feed' ) . ' <a href="' . admin_url() . '">' . __( 'Have fun!', 'import-kyero-feed' ) . '</a>' . '</p>';
 
 		do_action( 'import_end' );
 	}
@@ -195,12 +195,12 @@ class Kyero_Import extends WP_Importer {
 			$file = wp_import_handle_upload();
 
 			if ( isset( $file['error'] ) ) {
-				echo '<p><strong>' . __( 'Sorry, there has been an error.', 'kyero-importer' ) . '</strong><br />';
+				echo '<p><strong>' . __( 'Sorry, there has been an error.', 'import-kyero-feed' ) . '</strong><br />';
 				echo esc_html( $file['error'] ) . '</p>';
 				return false;
 			} elseif ( ! file_exists( $file['file'] ) ) {
-				echo '<p><strong>' . __( 'Sorry, there has been an error.', 'kyero-importer' ) . '</strong><br />';
-				printf( __( 'The export file could not be found at <code>%s</code>. It is likely that this was caused by a permissions problem.', 'kyero-importer' ), esc_html( $file['file'] ) );
+				echo '<p><strong>' . __( 'Sorry, there has been an error.', 'import-kyero-feed' ) . '</strong><br />';
+				printf( __( 'The export file could not be found at <code>%s</code>. It is likely that this was caused by a permissions problem.', 'import-kyero-feed' ), esc_html( $file['file'] ) );
 				echo '</p>';
 				return false;
 			}
@@ -209,7 +209,7 @@ class Kyero_Import extends WP_Importer {
 		$this->id    = (int) $file['id'];
 		$import_data = $this->parse( $file['file'] );
 		if ( is_wp_error( $import_data ) ) {
-			echo '<p><strong>' . __( 'Sorry, there has been an error.', 'kyero-importer' ) . '</strong><br />';
+			echo '<p><strong>' . __( 'Sorry, there has been an error.', 'import-kyero-feed' ) . '</strong><br />';
 			echo esc_html( $import_data->get_error_message() ) . '</p>';
 			return false;
 		}
@@ -217,7 +217,7 @@ class Kyero_Import extends WP_Importer {
 		$this->version = $import_data['version'];
 		if ( $this->version > $this->max_kyero_version ) {
 			echo '<div class="error"><p><strong>';
-			printf( __( 'This Kyero file (version %s) may not be supported by this version of the importer. Please consider updating.', 'kyero-importer' ), esc_html( $import_data['version'] ) );
+			printf( __( 'This Kyero file (version %s) may not be supported by this version of the importer. Please consider updating.', 'import-kyero-feed' ), esc_html( $import_data['version'] ) );
 			echo '</strong></p></div>';
 		}
 
@@ -243,7 +243,7 @@ class Kyero_Import extends WP_Importer {
 			foreach ( $import_data['posts'] as $post ) {
 				$login = sanitize_user( $post['post_author'], true );
 				if ( empty( $login ) ) {
-					printf( __( 'Failed to import author %s. Their posts will be attributed to the current user.', 'kyero-importer' ), esc_html( $post['post_author'] ) );
+					printf( __( 'Failed to import author %s. Their posts will be attributed to the current user.', 'import-kyero-feed' ), esc_html( $post['post_author'] ) );
 					echo '<br />';
 					continue;
 				}
@@ -284,14 +284,14 @@ class Kyero_Import extends WP_Importer {
 <form action="<?php echo admin_url( 'admin.php?import=kyero&amp;step=2' ); ?>" method="post">
 	<?php wp_nonce_field( 'import-kyero' ); ?>
 	<input type="hidden" name="import_id" value="<?php echo $this->id; ?>" />
-	<h3><?php _e( 'Properties', 'kyero-importer' ) ?></h3>
+	<h3><?php _e( 'Properties', 'import-kyero-feed' ) ?></h3>
 	<p><?php printf( __( '%s properties with %s images found' ), $property_count, $image_count ) ?></p>
 
 <?php if ( ! empty( $this->authors ) ) : ?>
-	<h3><?php _e( 'Assign Authors', 'kyero-importer' ); ?></h3>
-	<p><?php _e( 'To make it simpler for you to edit and save the imported content, you may want to reassign the author of the imported item to an existing user of this site, such as your primary administrator account.', 'kyero-importer' ); ?></p>
+	<h3><?php _e( 'Assign Authors', 'import-kyero-feed' ); ?></h3>
+	<p><?php _e( 'To make it simpler for you to edit and save the imported content, you may want to reassign the author of the imported item to an existing user of this site, such as your primary administrator account.', 'import-kyero-feed' ); ?></p>
 <?php if ( $this->allow_create_users() ) : ?>
-	<p><?php printf( __( 'If a new user is created by WordPress, a new password will be randomly generated and the new user&#8217;s role will be set as %s. Manually changing the new user&#8217;s details will be necessary.', 'kyero-importer' ), esc_html( get_option( 'default_role' ) ) ); ?></p>
+	<p><?php printf( __( 'If a new user is created by WordPress, a new password will be randomly generated and the new user&#8217;s role will be set as %s. Manually changing the new user&#8217;s details will be necessary.', 'import-kyero-feed' ), esc_html( get_option( 'default_role' ) ) ); ?></p>
 <?php endif; ?>
 	<ol id="authors">
 <?php foreach ( $this->authors as $author ) : ?>
@@ -301,14 +301,14 @@ class Kyero_Import extends WP_Importer {
 <?php endif; ?>
 
 <?php if ( $this->allow_fetch_attachments() ) : ?>
-	<h3><?php _e( 'Import Attachments', 'kyero-importer' ); ?></h3>
+	<h3><?php _e( 'Import Attachments', 'import-kyero-feed' ); ?></h3>
 	<p>
 		<input type="checkbox" value="1" name="fetch_attachments" id="import-attachments" />
-		<label for="import-attachments"><?php _e( 'Download and import file attachments', 'kyero-importer' ); ?></label>
+		<label for="import-attachments"><?php _e( 'Download and import file attachments', 'import-kyero-feed' ); ?></label>
 	</p>
 <?php endif; ?>
 
-	<p class="submit"><input type="submit" class="button" value="<?php esc_attr_e( 'Submit', 'kyero-importer' ); ?>" /></p>
+	<p class="submit"><input type="submit" class="button" value="<?php esc_attr_e( 'Submit', 'import-kyero-feed' ); ?>" /></p>
 </form>
 		<?php
 		// phpcs:enable Generic.WhiteSpace.ScopeIndent.Incorrect
@@ -322,7 +322,7 @@ class Kyero_Import extends WP_Importer {
 	 * @param array $author Author information, e.g. login, display name, email
 	 */
 	function author_select( $n, $author ) {
-		_e( 'Import author:', 'kyero-importer' );
+		_e( 'Import author:', 'import-kyero-feed' );
 		echo ' <strong>' . esc_html( $author['author_display_name'] );
 		if ( '1.0' != $this->version ) {
 			echo ' (' . esc_html( $author['author_login'] ) . ')';
@@ -337,10 +337,10 @@ class Kyero_Import extends WP_Importer {
 		if ( $create_users ) {
 			echo '<label for="user_new_' . $n . '">';
 			if ( '1.0' != $this->version ) {
-				_e( 'or create new user with login name:', 'kyero-importer' );
+				_e( 'or create new user with login name:', 'import-kyero-feed' );
 				$value = '';
 			} else {
-				_e( 'as a new user:', 'kyero-importer' );
+				_e( 'as a new user:', 'import-kyero-feed' );
 				$value = esc_attr( sanitize_user( $author['author_login'], true ) );
 			}
 			echo '</label>';
@@ -350,9 +350,9 @@ class Kyero_Import extends WP_Importer {
 
 		echo '<label for="imported_authors_' . $n . '">';
 		if ( ! $create_users && '1.0' == $this->version ) {
-			_e( 'assign posts to an existing user:', 'kyero-importer' );
+			_e( 'assign posts to an existing user:', 'import-kyero-feed' );
 		} else {
-			_e( 'or assign posts to an existing user:', 'kyero-importer' );
+			_e( 'or assign posts to an existing user:', 'import-kyero-feed' );
 		}
 		echo '</label>';
 
@@ -361,7 +361,7 @@ class Kyero_Import extends WP_Importer {
 				'name'            => "user_map[$n]",
 				'id'              => 'imported_authors_' . $n,
 				'multi'           => true,
-				'show_option_all' => __( '- Select -', 'kyero-importer' ),
+				'show_option_all' => __( '- Select -', 'import-kyero-feed' ),
 				'show'            => 'display_name_with_login',
 				'echo'            => 0,
 			)
@@ -420,7 +420,7 @@ class Kyero_Import extends WP_Importer {
 					}
 					$this->author_mapping[ $santized_old_login ] = $user_id;
 				} else {
-					printf( __( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'kyero-importer' ), esc_html( $this->authors[ $old_login ]['author_display_name'] ) );
+					printf( __( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'import-kyero-feed' ), esc_html( $this->authors[ $old_login ]['author_display_name'] ) );
 					if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
 						echo ' ' . $user_id->get_error_message();
 					}
@@ -479,7 +479,7 @@ class Kyero_Import extends WP_Importer {
 					$this->processed_terms[ intval( $cat['term_id'] ) ] = $id;
 				}
 			} else {
-				printf( __( 'Failed to import category %s', 'kyero-importer' ), esc_html( $cat['category_nicename'] ) );
+				printf( __( 'Failed to import category %s', 'import-kyero-feed' ), esc_html( $cat['category_nicename'] ) );
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
 					echo ': ' . $id->get_error_message();
 				}
@@ -530,7 +530,7 @@ class Kyero_Import extends WP_Importer {
 					$this->processed_terms[ intval( $tag['term_id'] ) ] = $id['term_id'];
 				}
 			} else {
-				printf( __( 'Failed to import post tag %s', 'kyero-importer' ), esc_html( $tag['tag_name'] ) );
+				printf( __( 'Failed to import post tag %s', 'import-kyero-feed' ), esc_html( $tag['tag_name'] ) );
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
 					echo ': ' . $id->get_error_message();
 				}
@@ -591,7 +591,7 @@ class Kyero_Import extends WP_Importer {
 					$this->processed_terms[ intval( $term['term_id'] ) ] = $id['term_id'];
 				}
 			} else {
-				printf( __( 'Failed to import %1$s %2$s', 'kyero-importer' ), esc_html( $term['term_taxonomy'] ), esc_html( $term['term_name'] ) );
+				printf( __( 'Failed to import %1$s %2$s', 'import-kyero-feed' ), esc_html( $term['term_taxonomy'] ), esc_html( $term['term_name'] ) );
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
 					echo ': ' . $id->get_error_message();
 				}
@@ -682,7 +682,7 @@ class Kyero_Import extends WP_Importer {
 
 			if ( ! post_type_exists( $post['post_type'] ) ) {
 				printf(
-					__( 'Failed to import &#8220;%1$s&#8221;: Invalid post type %2$s', 'kyero-importer' ),
+					__( 'Failed to import &#8220;%1$s&#8221;: Invalid post type %2$s', 'import-kyero-feed' ),
 					esc_html( $post['post_title'] ),
 					esc_html( $post['post_type'] )
 				);
@@ -723,7 +723,7 @@ class Kyero_Import extends WP_Importer {
 			$post_exists = apply_filters( 'wp_import_existing_post', $post_exists, $post );
 
 			if ( $post_exists && get_post_type( $post_exists ) == $post['post_type'] ) {
-				printf( __( '%1$s &#8220;%2$s&#8221; already exists.', 'kyero-importer' ), $post_type_object->labels->singular_name, esc_html( $post['post_title'] ) );
+				printf( __( '%1$s &#8220;%2$s&#8221; already exists.', 'import-kyero-feed' ), $post_type_object->labels->singular_name, esc_html( $post['post_title'] ) );
 				echo '<br />';
 				$comment_post_id = $post_exists;
 				$post_id         = $post_exists;
@@ -800,7 +800,7 @@ class Kyero_Import extends WP_Importer {
 
 				if ( is_wp_error( $post_id ) ) {
 					printf(
-						__( 'Failed to import %1$s &#8220;%2$s&#8221;', 'kyero-importer' ),
+						__( 'Failed to import %1$s &#8220;%2$s&#8221;', 'import-kyero-feed' ),
 						$post_type_object->labels->singular_name,
 						esc_html( $post['post_title'] )
 					);
@@ -839,7 +839,7 @@ class Kyero_Import extends WP_Importer {
 							$term_id = $t['term_id'];
 							do_action( 'wp_import_insert_term', $t, $term, $post_id, $post );
 						} else {
-							printf( __( 'Failed to import %1$s %2$s', 'kyero-importer' ), esc_html( $taxonomy ), esc_html( $term['name'] ) );
+							printf( __( 'Failed to import %1$s %2$s', 'import-kyero-feed' ), esc_html( $taxonomy ), esc_html( $term['name'] ) );
 							if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
 								echo ': ' . $t->get_error_message();
 							}
@@ -986,14 +986,14 @@ class Kyero_Import extends WP_Importer {
 
 		// no nav_menu term associated with this menu item
 		if ( ! $menu_slug ) {
-			_e( 'Menu item skipped due to missing menu slug', 'kyero-importer' );
+			_e( 'Menu item skipped due to missing menu slug', 'import-kyero-feed' );
 			echo '<br />';
 			return;
 		}
 
 		$menu_id = term_exists( $menu_slug, 'nav_menu' );
 		if ( ! $menu_id ) {
-			printf( __( 'Menu item skipped due to invalid menu slug: %s', 'kyero-importer' ), esc_html( $menu_slug ) );
+			printf( __( 'Menu item skipped due to invalid menu slug: %s', 'import-kyero-feed' ), esc_html( $menu_slug ) );
 			echo '<br />';
 			return;
 		} else {
@@ -1060,7 +1060,7 @@ class Kyero_Import extends WP_Importer {
 		if ( ! $this->fetch_attachments ) {
 			return new WP_Error(
 				'attachment_processing_error',
-				__( 'Fetching attachments is not enabled', 'kyero-importer' )
+				__( 'Fetching attachments is not enabled', 'import-kyero-feed' )
 			);
 		}
 
@@ -1078,7 +1078,7 @@ class Kyero_Import extends WP_Importer {
 		if ( $info ) {
 			$post['post_mime_type'] = $info['type'];
 		} else {
-			return new WP_Error( 'attachment_processing_error', __( 'Invalid file type', 'kyero-importer' ) );
+			return new WP_Error( 'attachment_processing_error', __( 'Invalid file type', 'import-kyero-feed' ) );
 		}
 
 		$post['guid'] = $upload['url'];
@@ -1122,7 +1122,7 @@ class Kyero_Import extends WP_Importer {
 
 		$tmp_file_name = wp_tempnam( $file_name );
 		if ( ! $tmp_file_name ) {
-			return new WP_Error( 'import_no_file', __( 'Could not create temporary file.', 'kyero-importer' ) );
+			return new WP_Error( 'import_no_file', __( 'Could not create temporary file.', 'import-kyero-feed' ) );
 		}
 
 		// Fetch the remote URL and write it to the placeholder file.
@@ -1144,7 +1144,7 @@ class Kyero_Import extends WP_Importer {
 				'import_file_error',
 				sprintf(
 					/* translators: 1: The WordPress error message. 2: The WordPress error code. */
-					__( 'Request failed due to an error: %1$s (%2$s)', 'kyero-importer' ),
+					__( 'Request failed due to an error: %1$s (%2$s)', 'import-kyero-feed' ),
 					esc_html( $remote_response->get_error_message() ),
 					esc_html( $remote_response->get_error_code() )
 				)
@@ -1160,7 +1160,7 @@ class Kyero_Import extends WP_Importer {
 				'import_file_error',
 				sprintf(
 					/* translators: 1: The HTTP error message. 2: The HTTP error code. */
-					__( 'Remote server returned the following unexpected result: %1$s (%2$s)', 'kyero-importer' ),
+					__( 'Remote server returned the following unexpected result: %1$s (%2$s)', 'import-kyero-feed' ),
 					get_status_header_desc( $remote_response_code ),
 					esc_html( $remote_response_code )
 				)
@@ -1172,25 +1172,25 @@ class Kyero_Import extends WP_Importer {
 		// Request failed.
 		if ( ! $headers ) {
 			@unlink( $tmp_file_name );
-			return new WP_Error( 'import_file_error', __( 'Remote server did not respond', 'kyero-importer' ) );
+			return new WP_Error( 'import_file_error', __( 'Remote server did not respond', 'import-kyero-feed' ) );
 		}
 
 		$filesize = (int) filesize( $tmp_file_name );
 
 		if ( 0 === $filesize ) {
 			@unlink( $tmp_file_name );
-			return new WP_Error( 'import_file_error', __( 'Zero size file downloaded', 'kyero-importer' ) );
+			return new WP_Error( 'import_file_error', __( 'Zero size file downloaded', 'import-kyero-feed' ) );
 		}
 
 		if ( ! isset( $headers['content-encoding'] ) && isset( $headers['content-length'] ) && $filesize !== (int) $headers['content-length'] ) {
 			@unlink( $tmp_file_name );
-			return new WP_Error( 'import_file_error', __( 'Downloaded file has incorrect size', 'kyero-importer' ) );
+			return new WP_Error( 'import_file_error', __( 'Downloaded file has incorrect size', 'import-kyero-feed' ) );
 		}
 
 		$max_size = (int) $this->max_attachment_size();
 		if ( ! empty( $max_size ) && $filesize > $max_size ) {
 			@unlink( $tmp_file_name );
-			return new WP_Error( 'import_file_error', sprintf( __( 'Remote file is too large, limit is %s', 'kyero-importer' ), size_format( $max_size ) ) );
+			return new WP_Error( 'import_file_error', sprintf( __( 'Remote file is too large, limit is %s', 'import-kyero-feed' ), size_format( $max_size ) ) );
 		}
 
 		// Override file name with Content-Disposition header value.
@@ -1222,7 +1222,7 @@ class Kyero_Import extends WP_Importer {
 		}
 
 		if ( ( ! $type || ! $ext ) && ! current_user_can( 'unfiltered_upload' ) ) {
-			return new WP_Error( 'import_file_error', __( 'Sorry, this file type is not permitted for security reasons.', 'kyero-importer' ) );
+			return new WP_Error( 'import_file_error', __( 'Sorry, this file type is not permitted for security reasons.', 'import-kyero-feed' ) );
 		}
 
 		$uploads = wp_upload_dir( $post['upload_date'] );
@@ -1237,7 +1237,7 @@ class Kyero_Import extends WP_Importer {
 
 		if ( ! $move_new_file ) {
 			@unlink( $tmp_file_name );
-			return new WP_Error( 'import_file_error', __( 'The uploaded file could not be moved', 'kyero-importer' ) );
+			return new WP_Error( 'import_file_error', __( 'The uploaded file could not be moved', 'import-kyero-feed' ) );
 		}
 
 		// Set correct file permissions.
@@ -1374,14 +1374,14 @@ class Kyero_Import extends WP_Importer {
 	// Display import page title
 	function header() {
 		echo '<div class="wrap">';
-		echo '<h2>' . __( 'Import WordPress', 'kyero-importer' ) . '</h2>';
+		echo '<h2>' . __( 'Import WordPress', 'import-kyero-feed' ) . '</h2>';
 
 		$updates  = get_plugin_updates();
 		$basename = plugin_basename( __FILE__ );
 		if ( isset( $updates[ $basename ] ) ) {
 			$update = $updates[ $basename ];
 			echo '<div class="error"><p><strong>';
-			printf( __( 'A new version of this importer is available. Please update to version %s to ensure compatibility with newer export files.', 'kyero-importer' ), $update->update->new_version );
+			printf( __( 'A new version of this importer is available. Please update to version %s to ensure compatibility with newer export files.', 'import-kyero-feed' ), $update->update->new_version );
 			echo '</strong></p></div>';
 		}
 	}
@@ -1397,21 +1397,21 @@ class Kyero_Import extends WP_Importer {
 	function greet() {
 		?>
 		<div class="narrow">
-			<p><?= __( 'Howdy! Upload your Kyero XML file or enter a feed and we&#8217;ll import the properties, images, features, property types and locations into this site.', 'kyero-importer' ); ?></p>
+			<p><?= __( 'Howdy! Upload your Kyero XML file or enter a feed and we&#8217;ll import the properties, images, features, property types and locations into this site.', 'import-kyero-feed' ); ?></p>
 			<hr />
 			<h2><?= __( 'Upload' ) ?></h2>
-			<p><?= __( 'Choose a Kyero (.xml) file to upload, then click Upload file and import.', 'kyero-importer' ); ?></p>
+			<p><?= __( 'Choose a Kyero (.xml) file to upload, then click Upload file and import.', 'import-kyero-feed' ); ?></p>
 			<?php wp_import_upload_form( 'admin.php?import=kyero&amp;step=1' ); ?>
 			<hr />
 			<h2><?= __( 'Feed' ) ?></h2>
 			<form action="<?php echo admin_url( 'admin.php?import=kyero&amp;step=1' ); ?>" method="post">
 				<?php wp_nonce_field( 'import-upload' ); ?>
-				<p><?= __( 'Enter a url to a kyero feed.', 'kyero-importer' ); ?></p>
+				<p><?= __( 'Enter a url to a kyero feed.', 'import-kyero-feed' ); ?></p>
 				<p>
-					<label for="import-url"><?php _e( 'Kyero download url', 'kyero-importer' ); ?></label>
+					<label for="import-url"><?php _e( 'Kyero download url', 'import-kyero-feed' ); ?></label>
 					<input type="text" value="" name="url" id="import-url" size="50" />
 				</p>
-				<p class="submit"><input type="submit" id="url-submit" class="button" disabled="disabled" value="<?php esc_attr_e( 'Submit', 'kyero-importer' ); ?>" /></p>
+				<p class="submit"><input type="submit" id="url-submit" class="button" disabled="disabled" value="<?php esc_attr_e( 'Submit', 'import-kyero-feed' ); ?>" /></p>
 				<script type="text/javascript">
 					const urlRegex = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
 					const importUrl = document.getElementById('import-url');

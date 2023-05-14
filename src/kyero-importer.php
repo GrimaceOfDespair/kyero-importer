@@ -1,15 +1,15 @@
 <?php
 /*
  * @wordpress-plugin
- * Plugin Name:       Kyero Importer
- * Plugin URI:        https://wordpress.org/plugins/kyero-importer/
+ * Plugin Name:       Import Kyero Feed
+ * Plugin URI:        https://wordpress.org/plugins/import-kyero-feed/
  * Description:       Import Easy Real Estate properties and images from a Kyero feed.
  * Author:            grimaceofdespair
  * Author URI:        https://www.bithive.be/
  * Version:           0.1
  * Requires at least: 5.2
  * Requires PHP:      5.6
- * Text Domain:       kyero-importer
+ * Text Domain:       import-kyero-feed
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -43,15 +43,15 @@ require_once dirname( __FILE__ ) . '/parsers/class-kyero-parser.php';
 require_once dirname( __FILE__ ) . '/class-kyero-import.php';
 
 function kyero_importer_init() {
-	load_plugin_textdomain( 'kyero-importer' );
+	load_plugin_textdomain( 'import-kyero-feed' );
 
 	/**
-	 * Kyero Importer object for registering the import callback
+	 * Import Kyero Feed object for registering the import callback
 	 * @global Kyero_Import $kyero_import
 	 */
 	$GLOBALS['kyero_import'] = new Kyero_Import();
 	// phpcs:ignore WordPress.WP.CapitalPDangit
-	register_importer( 'kyero', 'Kyero', __( 'Import Easy Real Estate <strong>properties and images</strong> from a Kyero feed.', 'kyero-importer' ), array( $GLOBALS['kyero_import'], 'dispatch' ) );
+	register_importer( 'kyero', 'Kyero', __( 'Import Easy Real Estate <strong>properties and images</strong> from a Kyero feed.', 'import-kyero-feed' ), array( $GLOBALS['kyero_import'], 'dispatch' ) );
 }
 add_action( 'admin_init', 'kyero_importer_init' );
 

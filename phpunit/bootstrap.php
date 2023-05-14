@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap file for the WordPress Importer
+ * PHPUnit bootstrap file for the Import Kyero Feed
  *
  * @package Sample_Plugin
  */
