@@ -151,7 +151,6 @@ class Kyero_Import extends WP_Importer {
 		wp_defer_comment_counting( false );
 
 		echo '<p>' . __( 'All done.', 'kyero-importer' ) . ' <a href="' . admin_url() . '">' . __( 'Have fun!', 'kyero-importer' ) . '</a>' . '</p>';
-		echo '<p>' . __( 'Remember to update the passwords and roles of imported users.', 'kyero-importer' ) . '</p>';
 
 		do_action( 'import_end' );
 	}
@@ -163,17 +162,48 @@ class Kyero_Import extends WP_Importer {
 	 * @return bool False if error uploading or invalid file, true otherwise
 	 */
 	function handle_upload() {
-		$file = wp_import_handle_upload();
 
-		if ( isset( $file['error'] ) ) {
-			echo '<p><strong>' . __( 'Sorry, there has been an error.', 'kyero-importer' ) . '</strong><br />';
-			echo esc_html( $file['error'] ) . '</p>';
-			return false;
-		} elseif ( ! file_exists( $file['file'] ) ) {
-			echo '<p><strong>' . __( 'Sorry, there has been an error.', 'kyero-importer' ) . '</strong><br />';
-			printf( __( 'The export file could not be found at <code>%s</code>. It is likely that this was caused by a permissions problem.', 'kyero-importer' ), esc_html( $file['file'] ) );
-			echo '</p>';
-			return false;
+		$import_url = $_POST['url'];
+		if ( $import_url ) {
+			$upload_path = wp_upload_dir()['path'];
+			$filename = wp_unique_filename( $upload_path, 'kyero.xml' );
+			$kyero_xml = "$upload_path/$filename";
+			file_put_contents( $kyero_xml, file_get_contents( $import_url ) );
+			$upload_url = wp_generate_uuid4();
+			$upload_type = 'text/xml';
+			$upload_file = $kyero_xml;
+
+			$object = array(
+				'post_title'     => wp_basename( $upload_file ),
+				'post_content'   => $upload_url,
+				'post_mime_type' => $upload_type,
+				'guid'           => $upload_url,
+				'context'        => 'import',
+				'post_status'    => 'private',
+			);
+		
+			$id = wp_insert_attachment( $object, $upload_file );
+		
+			wp_schedule_single_event( time() + DAY_IN_SECONDS, 'importer_scheduled_cleanup', array( $id ) );
+		
+			$file = array(
+				'id' => $id,
+				'file' => $upload_file,
+			);
+
+		} else {
+			$file = wp_import_handle_upload();
+
+			if ( isset( $file['error'] ) ) {
+				echo '<p><strong>' . __( 'Sorry, there has been an error.', 'kyero-importer' ) . '</strong><br />';
+				echo esc_html( $file['error'] ) . '</p>';
+				return false;
+			} elseif ( ! file_exists( $file['file'] ) ) {
+				echo '<p><strong>' . __( 'Sorry, there has been an error.', 'kyero-importer' ) . '</strong><br />';
+				printf( __( 'The export file could not be found at <code>%s</code>. It is likely that this was caused by a permissions problem.', 'kyero-importer' ), esc_html( $file['file'] ) );
+				echo '</p>';
+				return false;
+			}
 		}
 
 		$this->id    = (int) $file['id'];
@@ -192,6 +222,7 @@ class Kyero_Import extends WP_Importer {
 		}
 
 		$this->get_authors_from_import( $import_data );
+		$this->posts = $import_data[ 'posts' ];
 
 		return true;
 	}
@@ -233,11 +264,28 @@ class Kyero_Import extends WP_Importer {
 	 */
 	function import_options() {
 		$j = 0;
+
+		$property_count = count(
+			array_filter(
+				$this->posts,
+				function( $val ) { return 'property' === $val[ 'post_type' ]; }
+			)
+		);
+
+		$image_count = count(
+			array_filter(
+				$this->posts,
+				function( $val ) { return 'attachment' === $val[ 'post_type' ]; }
+			)
+		);
+
 		// phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 		?>
 <form action="<?php echo admin_url( 'admin.php?import=kyero&amp;step=2' ); ?>" method="post">
 	<?php wp_nonce_field( 'import-kyero' ); ?>
 	<input type="hidden" name="import_id" value="<?php echo $this->id; ?>" />
+	<h3><?php _e( 'Properties', 'kyero-importer' ) ?></h3>
+	<p><?php printf( __( '%s properties with %s images found' ), $property_count, $image_count ) ?></p>
 
 <?php if ( ! empty( $this->authors ) ) : ?>
 	<h3><?php _e( 'Assign Authors', 'kyero-importer' ); ?></h3>
@@ -1347,11 +1395,35 @@ class Kyero_Import extends WP_Importer {
 	 * Display introductory text and file upload form
 	 */
 	function greet() {
-		echo '<div class="narrow">';
-		echo '<p>' . __( 'Howdy! Upload your WordPress eXtended RSS (WXR) file and we&#8217;ll import the posts, pages, comments, custom fields, categories, and tags into this site.', 'kyero-importer' ) . '</p>';
-		echo '<p>' . __( 'Choose a WXR (.xml) file to upload, then click Upload file and import.', 'kyero-importer' ) . '</p>';
-		wp_import_upload_form( 'admin.php?import=kyero&amp;step=1' );
-		echo '</div>';
+		?>
+		<div class="narrow">
+			<p><?= __( 'Howdy! Upload your Kyero XML file or enter a feed and we&#8217;ll import the properties, images, features, property types and locations into this site.', 'kyero-importer' ); ?></p>
+			<hr />
+			<h2><?= __( 'Upload' ) ?></h2>
+			<p><?= __( 'Choose a Kyero (.xml) file to upload, then click Upload file and import.', 'kyero-importer' ); ?></p>
+			<?php wp_import_upload_form( 'admin.php?import=kyero&amp;step=1' ); ?>
+			<hr />
+			<h2><?= __( 'Feed' ) ?></h2>
+			<form action="<?php echo admin_url( 'admin.php?import=kyero&amp;step=1' ); ?>" method="post">
+				<?php wp_nonce_field( 'import-upload' ); ?>
+				<p><?= __( 'Enter a url to a kyero feed.', 'kyero-importer' ); ?></p>
+				<p>
+					<label for="import-url"><?php _e( 'Kyero download url', 'kyero-importer' ); ?></label>
+					<input type="text" value="" name="url" id="import-url" size="50" />
+				</p>
+				<p class="submit"><input type="submit" id="url-submit" class="button" disabled="disabled" value="<?php esc_attr_e( 'Submit', 'kyero-importer' ); ?>" /></p>
+				<script type="text/javascript">
+					const urlRegex = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
+					const importUrl = document.getElementById('import-url');
+					const submitUrl = document.getElementById('url-submit');
+					importUrl.addEventListener("keyup", importState);
+					function importState() {
+						submitUrl.disabled = !urlRegex.test(importUrl.value);
+					}
+				</script>
+			</form>
+		</div>
+		<?php
 	}
 
 	/**
