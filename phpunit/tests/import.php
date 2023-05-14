@@ -22,6 +22,9 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 			'property',
 			array( 'public' => true )
 		);
+		register_taxonomy( 'property-type', 'property' );
+		register_taxonomy( 'property-city', 'property' );
+		register_taxonomy( 'property-feature', 'property' );
 
 		global $wpdb;
 		// Crude but effective: make sure there's no residual data in the main tables.
@@ -64,6 +67,17 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 			)
 		);
 		$this->assertCount( 2, $properties );
+
+		$attachments = get_posts(
+			array(
+				'numberposts' => 10,
+				'post_type'   => 'attachment',
+				'post_status' => 'any',
+				'orderby'     => 'title',
+				'order'       => 'ASC',
+			)
+		);
+		$this->assertCount( 3, $attachments );
 
 		$property = $properties[0];
 		$this->assertSame( 'Apartment in Torre de la Horadada', $property->post_title );
@@ -116,6 +130,17 @@ class Tests_Import_Import extends WP_Import_UnitTestCase {
 			)
 		);
 		$this->assertCount( 2, $properties );
+
+		$attachments = get_posts(
+			array(
+				'numberposts' => 10,
+				'post_type'   => 'attachment',
+				'post_status' => 'any',
+				'orderby'     => 'title',
+				'order'       => 'ASC',
+			)
+		);
+		$this->assertCount( 3, $attachments );
 
 		$property = $properties[0];
 		$this->assertSame( 'Apartment in Torre de la Horadada', $property->post_title );

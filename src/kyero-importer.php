@@ -57,10 +57,10 @@ add_action( 'admin_init', 'kyero_importer_init' );
 
 function kyero_post_meta( $postmeta, $post_id, $post ) {
 
-	$property_id = get_existing_property_id( $post );
+	$post_id = get_post_id( $post );
 
 	// Skip setting kyero properties on reimport
-	if ( $property_id ) {
+	if ( $post_id ) {
 		return array();
 	}
 
@@ -70,45 +70,55 @@ function kyero_post_meta( $postmeta, $post_id, $post ) {
 add_filter( 'wp_import_post_meta', 'kyero_post_meta', 10, 3 );
 
 function kyero_property_exists( $post_exists, $post ) {
-
-	return get_existing_property_id( $post );
+	return get_post_id( $post );
 }
 
 add_filter( 'wp_import_existing_post', 'kyero_property_exists', 10, 2 );
 
-function get_existing_property_id( $post ) {
-	$kyero_ref = get_kyero_ref( $post );
+function get_post_id( $post ) {
+	$post_id = get_post_by_metadata( $post, 'property', 'REAL_HOMES_property_id' );
 
-	if ( $kyero_ref ) {
+	if ( ! $post_id ) {
+		$post_id = get_post_by_metadata( $post, 'attachment', 'kyero_import_url' );
+	}
 
-		$properties = get_posts(
+	return $post_id;
+}
+
+function get_post_by_metadata( $post, $post_type, $key ) {
+
+	$meta_value = get_metadata_value( $post, $key );
+
+	if ( $meta_value ) {
+
+		$posts = get_posts(
 			array(
 				'numberposts' => 1,
-				'post_type'   => 'property',
+				'post_type'   => $post_type,
 				'post_status' => 'any',
-				'meta_key'    => 'REAL_HOMES_property_id',
-				'meta_value'  => $kyero_ref,
+				'meta_key'    => $key,
+				'meta_value'  => $meta_value,
 			)
 		);
 
-		if ( count( $properties ) > 0 ) {
+		if ( count( $posts ) > 0 ) {
 
 			$post['postmeta'] = array();
 
-			return $properties[0]->ID;
+			return $posts[0]->ID;
 		}
 	}
 
 	return 0;
 }
 
-function get_kyero_ref( $post ) {
+function get_metadata_value( $post, $key ) {
 
 	if ( isset( $post['postmeta'] ) ) {
 
 		$postmeta = $post['postmeta'];
 
-		$index = array_search( 'REAL_HOMES_property_id', array_column( $postmeta, 'key' ), true );
+		$index = array_search( $key, array_column( $postmeta, 'key' ), true );
 
 		if ( false !== $index ) {
 			return $postmeta[ $index ]['value'];

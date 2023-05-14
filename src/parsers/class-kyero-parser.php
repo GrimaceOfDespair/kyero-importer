@@ -221,6 +221,12 @@ class Kyero_Parser {
 						'post_password'  => '',
 						'is_sticky'      => false,
 						'attachment_url' => (string) $image->url,
+						'postmeta'       => array(
+							array(
+								'key'   => 'kyero_import_url',
+								'value' => (string) $image->url,
+							)
+						)
 					);
 
 					$image_index++;
