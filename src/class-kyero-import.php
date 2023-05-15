@@ -190,7 +190,7 @@ class Kyero_Import extends WP_Importer {
 			wp_schedule_single_event( time() + DAY_IN_SECONDS, 'importer_scheduled_cleanup', array( $id ) );
 
 			$file = array(
-				'id' => $id,
+				'id'   => $id,
 				'file' => $upload_file,
 			);
 
