@@ -20,5 +20,6 @@ jobs:
       uses: 10up/action-wordpress-plugin-asset-update@stable
       env:
         README_NAME: src/readme.txt
+        SLUG: import-kyero-feed        
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
