@@ -14,5 +14,6 @@ jobs:
       uses: 10up/action-wordpress-plugin-deploy@stable
       env:
         BUILD_DIR: src
+        SLUG: import-kyero-feed
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
