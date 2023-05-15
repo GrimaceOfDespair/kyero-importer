@@ -165,7 +165,7 @@ class Kyero_Import extends WP_Importer {
 
 		$import_url = $_POST['url'];
 		if ( $import_url ) {
-			
+
 			$upload_path = wp_upload_dir()['path'];
 			$filename    = wp_unique_filename( $upload_path, 'kyero.xml' );
 			$kyero_xml   = "$upload_path/$filename";
@@ -184,7 +184,7 @@ class Kyero_Import extends WP_Importer {
 				'context'        => 'import',
 				'post_status'    => 'private',
 			);
-		
+
 			$id = wp_insert_attachment( $object, $upload_file );
 
 			wp_schedule_single_event( time() + DAY_IN_SECONDS, 'importer_scheduled_cleanup', array( $id ) );
@@ -272,7 +272,7 @@ class Kyero_Import extends WP_Importer {
 			array_filter(
 				$this->posts,
 				function( $val ) {
-					return 'property' === $val[ 'post_type' ];
+					return 'property' === $val['post_type'];
 				}
 			)
 		);
@@ -281,7 +281,7 @@ class Kyero_Import extends WP_Importer {
 			array_filter(
 				$this->posts,
 				function( $val ) {
-					return 'attachment' === $val[ 'post_type' ];
+					return 'attachment' === $val['post_type'];
 				}
 			)
 		);
@@ -291,8 +291,8 @@ class Kyero_Import extends WP_Importer {
 <form action="<?php echo admin_url( 'admin.php?import=kyero&amp;step=2' ); ?>" method="post">
 	<?php wp_nonce_field( 'import-kyero' ); ?>
 	<input type="hidden" name="import_id" value="<?php echo $this->id; ?>" />
-	<h3><?php _e( 'Properties', 'import-kyero-feed' ) ?></h3>
-	<p><?php printf( __( '%s properties with %s images found' ), $property_count, $image_count ) ?></p>
+	<h3><?php _e( 'Properties', 'import-kyero-feed' ); ?></h3>
+	<p><?php printf( __( '%s properties with %s images found' ), $property_count, $image_count ); ?></p>
 
 <?php if ( ! empty( $this->authors ) ) : ?>
 	<h3><?php _e( 'Assign Authors', 'import-kyero-feed' ); ?></h3>
@@ -1404,16 +1404,16 @@ class Kyero_Import extends WP_Importer {
 	function greet() {
 		?>
 		<div class="narrow">
-			<p><?= __( 'Howdy! Upload your Kyero XML file or enter a feed and we&#8217;ll import the properties, images, features, property types and locations into this site.', 'import-kyero-feed' ); ?></p>
+			<p><?php _e( 'Howdy! Upload your Kyero XML file or enter a feed and we&#8217;ll import the properties, images, features, property types and locations into this site.', 'import-kyero-feed' ); ?></p>
 			<hr />
-			<h2><?= __( 'Upload' ) ?></h2>
-			<p><?= __( 'Choose a Kyero (.xml) file to upload, then click Upload file and import.', 'import-kyero-feed' ); ?></p>
+			<h2><?php _e( 'Upload' ) ?></h2>
+			<p><?php _e( 'Choose a Kyero (.xml) file to upload, then click Upload file and import.', 'import-kyero-feed' ); ?></p>
 			<?php wp_import_upload_form( 'admin.php?import=kyero&amp;step=1' ); ?>
 			<hr />
-			<h2><?= __( 'Feed' ) ?></h2>
+			<h2><?php _e( 'Feed' ) ?></h2>
 			<form action="<?php echo admin_url( 'admin.php?import=kyero&amp;step=1' ); ?>" method="post">
 				<?php wp_nonce_field( 'import-upload' ); ?>
-				<p><?= __( 'Enter a url to a kyero feed.', 'import-kyero-feed' ); ?></p>
+				<p><?php _e( 'Enter a url to a kyero feed.', 'import-kyero-feed' ); ?></p>
 				<p>
 					<label for="import-url"><?php _e( 'Kyero download url', 'import-kyero-feed' ); ?></label>
 					<input type="text" value="" name="url" id="import-url" size="50" />
