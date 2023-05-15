@@ -225,8 +225,8 @@ class Kyero_Parser {
 							array(
 								'key'   => 'kyero_import_url',
 								'value' => (string) $image->url,
-							)
-						)
+							),
+						),
 					);
 
 					$image_index++;

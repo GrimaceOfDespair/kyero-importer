@@ -165,11 +165,14 @@ class Kyero_Import extends WP_Importer {
 
 		$import_url = $_POST['url'];
 		if ( $import_url ) {
+			
 			$upload_path = wp_upload_dir()['path'];
-			$filename = wp_unique_filename( $upload_path, 'kyero.xml' );
-			$kyero_xml = "$upload_path/$filename";
+			$filename    = wp_unique_filename( $upload_path, 'kyero.xml' );
+			$kyero_xml   = "$upload_path/$filename";
+
 			file_put_contents( $kyero_xml, file_get_contents( $import_url ) );
-			$upload_url = wp_generate_uuid4();
+
+			$upload_url  = wp_generate_uuid4();
 			$upload_type = 'text/xml';
 			$upload_file = $kyero_xml;
 
@@ -183,9 +186,9 @@ class Kyero_Import extends WP_Importer {
 			);
 		
 			$id = wp_insert_attachment( $object, $upload_file );
-		
+
 			wp_schedule_single_event( time() + DAY_IN_SECONDS, 'importer_scheduled_cleanup', array( $id ) );
-		
+
 			$file = array(
 				'id' => $id,
 				'file' => $upload_file,
@@ -222,7 +225,7 @@ class Kyero_Import extends WP_Importer {
 		}
 
 		$this->get_authors_from_import( $import_data );
-		$this->posts = $import_data[ 'posts' ];
+		$this->posts = $import_data['posts'];
 
 		return true;
 	}
@@ -268,14 +271,18 @@ class Kyero_Import extends WP_Importer {
 		$property_count = count(
 			array_filter(
 				$this->posts,
-				function( $val ) { return 'property' === $val[ 'post_type' ]; }
+				function( $val ) {
+					return 'property' === $val[ 'post_type' ];
+				}
 			)
 		);
 
 		$image_count = count(
 			array_filter(
 				$this->posts,
-				function( $val ) { return 'attachment' === $val[ 'post_type' ]; }
+				function( $val ) {
+					return 'attachment' === $val[ 'post_type' ];
+				}
 			)
 		);
 
