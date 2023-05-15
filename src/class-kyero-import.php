@@ -1406,11 +1406,11 @@ class Kyero_Import extends WP_Importer {
 		<div class="narrow">
 			<p><?php _e( 'Howdy! Upload your Kyero XML file or enter a feed and we&#8217;ll import the properties, images, features, property types and locations into this site.', 'import-kyero-feed' ); ?></p>
 			<hr />
-			<h2><?php _e( 'Upload' ) ?></h2>
+			<h2><?php _e( 'Upload' ); ?></h2>
 			<p><?php _e( 'Choose a Kyero (.xml) file to upload, then click Upload file and import.', 'import-kyero-feed' ); ?></p>
 			<?php wp_import_upload_form( 'admin.php?import=kyero&amp;step=1' ); ?>
 			<hr />
-			<h2><?php _e( 'Feed' ) ?></h2>
+			<h2><?php _e( 'Feed' ); ?></h2>
 			<form action="<?php echo admin_url( 'admin.php?import=kyero&amp;step=1' ); ?>" method="post">
 				<?php wp_nonce_field( 'import-upload' ); ?>
 				<p><?php _e( 'Enter a url to a kyero feed.', 'import-kyero-feed' ); ?></p>
