@@ -14,7 +14,7 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
 
-if ( ! defined( 'WP_LOAD_IMPORTERS' ) ) {
+if ( ! defined( 'WP_LOAD_IMPORTERS' ) && ! defined( 'DOING_CRON' ) ) {
 	return;
 }
 
@@ -53,7 +53,15 @@ function kyero_importer_init() {
 	// phpcs:ignore WordPress.WP.CapitalPDangit
 	register_importer( 'kyero', 'Kyero', __( 'Import Easy Real Estate <strong>properties and images</strong> from a Kyero feed.', 'import-kyero-feed' ), array( $GLOBALS['kyero_import'], 'dispatch' ) );
 }
+
 add_action( 'admin_init', 'kyero_importer_init' );
+
+function import_kyero_url( $url, $login ) {
+	$import = new Kyero_Import;
+	$import->run( $url, $login );
+}
+
+add_action( 'import_kyero_url', 'import_kyero_url', 10, 2 );
 
 function kyero_post_meta( $postmeta, $post_id, $post ) {
 

@@ -53,7 +53,7 @@ class Kyero_Import extends WP_Importer {
 				break;
 			case 1:
 				check_admin_referer( 'import-upload' );
-				if ( $this->handle_upload() ) {
+				if ( $this->handle_upload( $_POST['url'] ) ) {
 					$this->import_options();
 				}
 				break;
@@ -63,11 +63,27 @@ class Kyero_Import extends WP_Importer {
 				$this->id                = (int) $_POST['import_id'];
 				$file                    = get_attached_file( $this->id );
 				set_time_limit( 0 );
-				$this->import( $file );
+				$this->import( $file, $_POST['imported_authors'], $_POST['user_map'] );
 				break;
 		}
 
 		$this->footer();
+	}
+
+	function run( $import_url, $login = 'admin', $fetch_attachments = true, $time_limit = 3600 ) {
+		if ( ! $import_url ) {
+			echo __('Cannot run without a feed', 'import-kyero-feed');
+			return;
+		}
+
+		$this->handle_upload( $import_url );
+		$this->fetch_attachments = $fetch_attachments;
+		$this->authors[ 'kyero' ] = array(
+			'author_login'        => $login,
+			'author_display_name' => 'Auto-created ' . $login,
+		);
+		set_time_limit( $time_limit );
+		$this->import( get_attached_file( $this->id ) );
 	}
 
 	/**
@@ -75,13 +91,15 @@ class Kyero_Import extends WP_Importer {
 	 *
 	 * @param string $file Path to the WXR file for importing
 	 */
-	function import( $file ) {
+	function import( $file, $imported_authors = null, $user_map = null ) {
 		add_filter( 'import_post_meta_key', array( $this, 'is_valid_meta_key' ) );
 		add_filter( 'http_request_timeout', array( &$this, 'bump_request_timeout' ) );
 
 		$this->import_start( $file );
 
-		$this->get_author_mapping();
+		if ( $imported_authors ) {
+			$this->get_author_mapping( $imported_authors, $user_map );
+		}
 
 		wp_suspend_cache_invalidation( true );
 		$this->process_categories();
@@ -161,9 +179,8 @@ class Kyero_Import extends WP_Importer {
 	 *
 	 * @return bool False if error uploading or invalid file, true otherwise
 	 */
-	function handle_upload() {
+	function handle_upload( $import_url = '' ) {
 
-		$import_url = $_POST['url'];
 		if ( $import_url ) {
 
 			$upload_path = wp_upload_dir()['path'];
@@ -195,7 +212,7 @@ class Kyero_Import extends WP_Importer {
 			);
 
 		} else {
-			$file = wp_import_handle_upload();
+			$file = wp_import_handle_upload( );
 
 			if ( isset( $file['error'] ) ) {
 				echo '<p><strong>' . __( 'Sorry, there has been an error.', 'import-kyero-feed' ) . '</strong><br />';
@@ -386,20 +403,16 @@ class Kyero_Import extends WP_Importer {
 	 * in import options form. Can map to an existing user, create a new user
 	 * or falls back to the current user in case of error with either of the previous
 	 */
-	function get_author_mapping() {
-		if ( ! isset( $_POST['imported_authors'] ) ) {
-			return;
-		}
-
+	function get_author_mapping( $imported_authors, $user_map ) {
 		$create_users = $this->allow_create_users();
 
-		foreach ( (array) $_POST['imported_authors'] as $i => $old_login ) {
+		foreach ( (array) $imported_authors as $i => $old_login ) {
 			// Multisite adds strtolower to sanitize_user. Need to sanitize here to stop breakage in process_posts.
 			$santized_old_login = sanitize_user( $old_login, true );
 			$old_id             = isset( $this->authors[ $old_login ]['author_id'] ) ? intval( $this->authors[ $old_login ]['author_id'] ) : false;
 
-			if ( ! empty( $_POST['user_map'][ $i ] ) ) {
-				$user = get_userdata( intval( $_POST['user_map'][ $i ] ) );
+			if ( ! empty( $user_map[ $i ] ) ) {
+				$user = get_userdata( intval( $user_map[ $i ] ) );
 				if ( isset( $user->ID ) ) {
 					if ( $old_id ) {
 						$this->processed_authors[ $old_id ] = $user->ID;
@@ -407,7 +420,7 @@ class Kyero_Import extends WP_Importer {
 					$this->author_mapping[ $santized_old_login ] = $user->ID;
 				}
 			} elseif ( $create_users ) {
-				if ( ! empty( $_POST['user_new'][ $i ] ) ) {
+				if ( ! empty( $user_map[ $i ] ) ) {
 					$user_id = wp_create_user( $_POST['user_new'][ $i ], wp_generate_password() );
 				} elseif ( '1.0' != $this->version ) {
 					$user_data = array(
