@@ -19,8 +19,8 @@ if ( ! defined( 'WP_LOAD_IMPORTERS' ) && ! defined( 'DOING_CRON' ) ) {
 }
 
 /** Display verbose errors */
-if ( ! defined( 'IMPORT_DEBUG' ) ) {
-	define( 'IMPORT_DEBUG', WP_DEBUG );
+if ( ! defined( 'KIF_DEBUG' ) ) {
+	define( 'KIF_DEBUG', WP_DEBUG );
 }
 
 /** WordPress Import Administration API */

@@ -441,7 +441,7 @@ class Kyero_Import extends WP_Importer {
 					$this->author_mapping[ $santized_old_login ] = $user_id;
 				} else {
 					printf( __( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'import-kyero-feed' ), esc_html( $this->authors[ $old_login ]['author_display_name'] ) );
-					if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
+					if ( defined( 'KIF_DEBUG' ) && KIF_DEBUG ) {
 						echo ' ' . $user_id->get_error_message();
 					}
 					echo '<br />';
@@ -500,7 +500,7 @@ class Kyero_Import extends WP_Importer {
 				}
 			} else {
 				printf( __( 'Failed to import category %s', 'import-kyero-feed' ), esc_html( $cat['category_nicename'] ) );
-				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
+				if ( defined( 'KIF_DEBUG' ) && KIF_DEBUG ) {
 					echo ': ' . $id->get_error_message();
 				}
 				echo '<br />';
@@ -551,7 +551,7 @@ class Kyero_Import extends WP_Importer {
 				}
 			} else {
 				printf( __( 'Failed to import post tag %s', 'import-kyero-feed' ), esc_html( $tag['tag_name'] ) );
-				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
+				if ( defined( 'KIF_DEBUG' ) && KIF_DEBUG ) {
 					echo ': ' . $id->get_error_message();
 				}
 				echo '<br />';
@@ -612,7 +612,7 @@ class Kyero_Import extends WP_Importer {
 				}
 			} else {
 				printf( __( 'Failed to import %1$s %2$s', 'import-kyero-feed' ), esc_html( $term['term_taxonomy'] ), esc_html( $term['term_name'] ) );
-				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
+				if ( defined( 'KIF_DEBUG' ) && KIF_DEBUG ) {
 					echo ': ' . $id->get_error_message();
 				}
 				echo '<br />';
@@ -824,7 +824,7 @@ class Kyero_Import extends WP_Importer {
 						$post_type_object->labels->singular_name,
 						esc_html( $post['post_title'] )
 					);
-					if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
+					if ( defined( 'KIF_DEBUG' ) && KIF_DEBUG ) {
 						echo ': ' . $post_id->get_error_message();
 					}
 					echo '<br />';
@@ -860,7 +860,7 @@ class Kyero_Import extends WP_Importer {
 							do_action( 'wp_import_insert_term', $t, $term, $post_id, $post );
 						} else {
 							printf( __( 'Failed to import %1$s %2$s', 'import-kyero-feed' ), esc_html( $taxonomy ), esc_html( $term['name'] ) );
-							if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
+							if ( defined( 'KIF_DEBUG' ) && KIF_DEBUG ) {
 								echo ': ' . $t->get_error_message();
 							}
 							echo '<br />';
