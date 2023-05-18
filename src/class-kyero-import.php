@@ -183,9 +183,9 @@ class Kyero_Import extends WP_Importer {
 
 		if ( $import_url ) {
 
-			$upload_path  = wp_upload_dir()['path'];
-			$filename     = wp_unique_filename( $upload_path, 'kyero.xml' );
-			$kyero_file   = "$upload_path/$filename";
+			$upload_path = wp_upload_dir()['path'];
+			$filename    = wp_unique_filename( $upload_path, 'kyero.xml' );
+			$kyero_file  = "$upload_path/$filename";
 
 			$sanitized_url = esc_url_raw( $import_url, array( 'http', 'https' ) );
 			$response      = wp_remote_get( $sanitized_url );
