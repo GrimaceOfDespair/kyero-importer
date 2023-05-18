@@ -91,14 +91,14 @@ class Kyero_Import extends WP_Importer {
 	 *
 	 * @param string $file Path to the WXR file for importing
 	 */
-	function import( $file, $imported_authors = null, $user_map = null ) {
+	function import( $file, $imported_authors = null, $user_map = null, $user_new = null ) {
 		add_filter( 'import_post_meta_key', array( $this, 'is_valid_meta_key' ) );
 		add_filter( 'http_request_timeout', array( &$this, 'bump_request_timeout' ) );
 
 		$this->import_start( $file );
 
 		if ( $imported_authors ) {
-			$this->get_author_mapping( $imported_authors, $user_map );
+			$this->get_author_mapping( $imported_authors, $user_map, $user_new );
 		}
 
 		wp_suspend_cache_invalidation( true );
@@ -403,7 +403,7 @@ class Kyero_Import extends WP_Importer {
 	 * in import options form. Can map to an existing user, create a new user
 	 * or falls back to the current user in case of error with either of the previous
 	 */
-	function get_author_mapping( $imported_authors, $user_map ) {
+	function get_author_mapping( $imported_authors, $user_map, $user_new ) {
 		$create_users = $this->allow_create_users();
 
 		foreach ( (array) $imported_authors as $i => $old_login ) {
@@ -420,8 +420,8 @@ class Kyero_Import extends WP_Importer {
 					$this->author_mapping[ $santized_old_login ] = $user->ID;
 				}
 			} elseif ( $create_users ) {
-				if ( ! empty( $user_map[ $i ] ) ) {
-					$user_id = wp_create_user( $_POST['user_new'][ $i ], wp_generate_password() );
+				if ( ! empty( $user_new[ $i ] ) ) {
+					$user_id = wp_create_user( $user_new[ $i ], wp_generate_password() );
 				} elseif ( '1.0' != $this->version ) {
 					$user_data = array(
 						'user_login'   => $old_login,

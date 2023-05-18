@@ -45,15 +45,9 @@ abstract class WP_Import_UnitTestCase extends WP_UnitTestCase {
 			$i++;
 		}
 
-		$_POST = array(
-			'imported_authors' => $authors,
-			'user_map'         => $mapping,
-			'user_new'         => $new,
-		);
-
 		ob_start();
 		$importer->fetch_attachments = $fetch_files;
-		$importer->import( $file );
+		$importer->import( $file, $authors, $mapping, $new );
 		ob_end_clean();
 
 		$_POST = array();
