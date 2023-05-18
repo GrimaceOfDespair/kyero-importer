@@ -19,8 +19,8 @@ if ( ! defined( 'WP_LOAD_IMPORTERS' ) && ! defined( 'DOING_CRON' ) ) {
 }
 
 /** Display verbose errors */
-if ( ! defined( 'KIF_DEBUG' ) ) {
-	define( 'KIF_DEBUG', WP_DEBUG );
+if ( ! defined( 'IKYF_DEBUG' ) ) {
+	define( 'IKYF_DEBUG', WP_DEBUG );
 }
 
 /** WordPress Import Administration API */
@@ -42,30 +42,30 @@ require_once dirname( __FILE__ ) . '/parsers/class-kyero-parser.php';
 /** Kyero_Import class */
 require_once dirname( __FILE__ ) . '/class-kyero-import.php';
 
-function kyero_importer_init() {
+function ikyf_init() {
 	load_plugin_textdomain( 'import-kyero-feed' );
 
 	/**
 	 * Import Kyero Feed object for registering the import callback
 	 * @global Kyero_Import $kyero_import
 	 */
-	$GLOBALS['kyero_import'] = new Kyero_Import();
+	$GLOBALS['import_kyero_feed'] = new Kyero_Import();
 	// phpcs:ignore WordPress.WP.CapitalPDangit
-	register_importer( 'kyero', 'Kyero', __( 'Import Easy Real Estate <strong>properties and images</strong> from a Kyero feed.', 'import-kyero-feed' ), array( $GLOBALS['kyero_import'], 'dispatch' ) );
+	register_importer( 'kyero', 'Kyero', __( 'Import Easy Real Estate <strong>properties and images</strong> from a Kyero feed.', 'import-kyero-feed' ), array( $GLOBALS['import_kyero_feed'], 'dispatch' ) );
 }
 
-add_action( 'admin_init', 'kyero_importer_init' );
+add_action( 'admin_init', 'ikyf_init' );
 
-function import_kyero_url( $url, $login ) {
+function ikyf_import_url( $url, $login ) {
 	$import = new Kyero_Import;
 	$import->run( $url, $login );
 }
 
-add_action( 'import_kyero_url', 'import_kyero_url', 10, 2 );
+add_action( 'import_kyero_url', 'ikyf_import_url', 10, 2 );
 
-function kyero_post_meta( $postmeta, $post_id, $post ) {
+function ikyf_post_meta( $postmeta, $post_id, $post ) {
 
-	$post_id = get_post_id( $post );
+	$post_id = ikyf_get_post_id( $post );
 
 	// Skip setting kyero properties on reimport
 	if ( $post_id ) {
@@ -75,27 +75,27 @@ function kyero_post_meta( $postmeta, $post_id, $post ) {
 	return $postmeta;
 }
 
-add_filter( 'wp_import_post_meta', 'kyero_post_meta', 10, 3 );
+add_filter( 'wp_import_post_meta', 'ikyf_post_meta', 10, 3 );
 
-function kyero_property_exists( $post_exists, $post ) {
-	return get_post_id( $post );
+function ikyf_property_exists( $post_exists, $post ) {
+	return ikyf_get_post_id( $post );
 }
 
-add_filter( 'wp_import_existing_post', 'kyero_property_exists', 10, 2 );
+add_filter( 'wp_import_existing_post', 'ikyf_property_exists', 10, 2 );
 
-function get_post_id( $post ) {
-	$post_id = get_post_by_metadata( $post, 'property', 'REAL_HOMES_property_id' );
+function ikyf_get_post_id( $post ) {
+	$post_id = ikyf_get_post_by_metadata( $post, 'property', 'REAL_HOMES_property_id' );
 
 	if ( ! $post_id ) {
-		$post_id = get_post_by_metadata( $post, 'attachment', 'kyero_import_url' );
+		$post_id = ikyf_get_post_by_metadata( $post, 'attachment', 'kyero_import_url' );
 	}
 
 	return $post_id;
 }
 
-function get_post_by_metadata( $post, $post_type, $key ) {
+function ikyf_get_post_by_metadata( $post, $post_type, $key ) {
 
-	$meta_value = get_metadata_value( $post, $key );
+	$meta_value = ikyf_metadata_value( $post, $key );
 
 	if ( $meta_value ) {
 
@@ -120,7 +120,7 @@ function get_post_by_metadata( $post, $post_type, $key ) {
 	return 0;
 }
 
-function get_metadata_value( $post, $key ) {
+function ikyf_metadata_value( $post, $key ) {
 
 	if ( isset( $post['postmeta'] ) ) {
 
