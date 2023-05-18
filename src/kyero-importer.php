@@ -33,11 +33,8 @@ if ( ! class_exists( 'WP_Importer' ) ) {
 	}
 }
 
-/** Functions missing in older WordPress versions. */
-require_once dirname( __FILE__ ) . '/compat.php';
-
 /** Kyero_Parser class */
-require_once dirname( __FILE__ ) . '/parsers/class-kyero-parser.php';
+require_once dirname( __FILE__ ) . '/class-kyero-parser.php';
 
 /** Kyero_Import class */
 require_once dirname( __FILE__ ) . '/class-kyero-import.php';
