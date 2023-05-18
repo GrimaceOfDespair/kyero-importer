@@ -359,7 +359,7 @@ class Kyero_Import extends WP_Importer {
 
 		$create_users = $this->allow_create_users();
 		if ( $create_users ) {
-			echo '<label for="user_new_' . $n . '">';
+			echo '<label for="user_new_' . esc_attr( $n ) . '">';
 			if ( '1.0' != $this->version ) {
 				_e( 'or create new user with login name:', 'import-kyero-feed' );
 				$value = '';
@@ -369,7 +369,7 @@ class Kyero_Import extends WP_Importer {
 			}
 			echo '</label>';
 
-			echo ' <input type="text" id="user_new_' . $n . '" name="user_new[' . $n . ']" value="' . $value . '" /><br />';
+			echo ' <input type="text" id="user_new_' . esc_attr( $n ) . '" name="user_new[' . esc_attr( $n ) . ']" value="' . $value . '" /><br />';
 		}
 
 		echo '<label for="imported_authors_' . $n . '">';
