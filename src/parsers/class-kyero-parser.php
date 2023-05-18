@@ -30,7 +30,7 @@ class Kyero_Parser {
 		}
 
 		if ( ! $success || isset( $dom->doctype ) ) {
-			return new WP_Error( 'SimpleXML_parse_error', __( 'There was an error when reading this WXR file', 'import-kyero-feed' ), libxml_get_errors() );
+			return new WP_Error( 'SimpleXML_parse_error', __( 'There was an error when reading this Kyero file', 'import-kyero-feed' ), libxml_get_errors() );
 		}
 
 		$xml = simplexml_import_dom( $dom );
@@ -38,18 +38,18 @@ class Kyero_Parser {
 
 		// halt if loading produces an error
 		if ( ! $xml ) {
-			return new WP_Error( 'SimpleXML_parse_error', __( 'There was an error when reading this WXR file', 'import-kyero-feed' ), libxml_get_errors() );
+			return new WP_Error( 'SimpleXML_parse_error', __( 'There was an error when reading this Kyero file', 'import-kyero-feed' ), libxml_get_errors() );
 		}
 
-		$wxr_version = $xml->xpath( '/root/kyero/feed_version' );
-		if ( ! $wxr_version ) {
-			return new WP_Error( 'WXR_parse_error', __( 'This does not appear to be a WXR file, missing/invalid WXR version number', 'import-kyero-feed' ) );
+		$kyero_version = $xml->xpath( '/root/kyero/feed_version' );
+		if ( ! $kyero_version ) {
+			return new WP_Error( 'Kyero_parse_error', __( 'This does not appear to be a Kyero file, missing/invalid Kyero version number', 'import-kyero-feed' ) );
 		}
 
-		$wxr_version = (string) trim( $wxr_version[0] );
+		$kyero_version = (string) trim( $kyero_version[0] );
 		// confirm that we are dealing with the correct file format
-		if ( ! preg_match( '/^\d+(\.\d+)?$/', $wxr_version ) ) {
-			return new WP_Error( 'WXR_parse_error', __( 'bThis does not appear to be a WXR file, missing/invalid WXR version number', 'import-kyero-feed' ) );
+		if ( ! preg_match( '/^\d+(\.\d+)?$/', $kyero_version ) ) {
+			return new WP_Error( 'Kyero_parse_error', __( 'This does not appear to be a Kyero file, missing/invalid Kyero version number', 'import-kyero-feed' ) );
 		}
 
 		$base_url = $xml->xpath( '/rss/channel/wp:base_site_url' );
@@ -266,7 +266,7 @@ class Kyero_Parser {
 			'terms'         => $terms,
 			'base_url'      => $base_url,
 			'base_blog_url' => $base_blog_url,
-			'version'       => $wxr_version,
+			'version'       => $kyero_version,
 		);
 	}
 }

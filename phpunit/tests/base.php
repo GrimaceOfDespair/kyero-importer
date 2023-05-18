@@ -2,12 +2,12 @@
 
 abstract class WP_Import_UnitTestCase extends WP_UnitTestCase {
 	/**
-	 * Import a WXR file.
+	 * Import a Kyero file.
 	 *
 	 * The $users parameter provides information on how users specified in the import
 	 * file should be imported. Each key is a user login name and indicates if the user
 	 * should be mapped to an existing user, created as a new user with a particular login
-	 * or imported with the information held in the WXR file. An example of this:
+	 * or imported with the information held in the Kyero file. An example of this:
 	 *
 	 * <code>
 	 * $users = array(
@@ -33,7 +33,7 @@ abstract class WP_Import_UnitTestCase extends WP_UnitTestCase {
 		$i       = 0;
 
 		// Each user is either mapped to a given ID, mapped to a new user
-		// with given login or imported using details in WXR file.
+		// with given login or imported using details in Kyero file.
 		foreach ( $users as $user => $map ) {
 			$authors[ $i ] = $user;
 			if ( is_int( $map ) ) {

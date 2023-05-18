@@ -1,6 +1,6 @@
 <?php
 /**
- * Import Kyero Feed class for managing the import process of a WXR file
+ * Import Kyero Feed class for managing the import process of a Kyero file
  *
  * @package Kyero
  * @subpackage Importer
@@ -10,11 +10,11 @@
  * Import Kyero Feed class.
  */
 class Kyero_Import extends WP_Importer {
-	var $max_kyero_version = 3; // max. supported WXR version
+	var $max_kyero_version = 3; // max. supported Kyero version
 
-	var $id; // WXR attachment ID
+	var $id; // Kyero attachment ID
 
-	// information to import from WXR file
+	// information to import from Kyero file
 	var $version;
 	var $authors    = array();
 	var $posts      = array();
@@ -41,7 +41,7 @@ class Kyero_Import extends WP_Importer {
 	/**
 	 * Registered callback function for the Import Kyero Feed
 	 *
-	 * Manages the three separate stages of the WXR import process
+	 * Manages the three separate stages of the Kyero import process
 	 */
 	function dispatch() {
 		$this->header();
@@ -89,7 +89,7 @@ class Kyero_Import extends WP_Importer {
 	/**
 	 * The main controller for the actual import stage.
 	 *
-	 * @param string $file Path to the WXR file for importing
+	 * @param string $file Path to the Kyero file for importing
 	 */
 	function import( $file, $imported_authors = null, $user_map = null, $user_new = null ) {
 		add_filter( 'import_post_meta_key', array( $this, 'is_valid_meta_key' ) );
@@ -118,9 +118,9 @@ class Kyero_Import extends WP_Importer {
 	}
 
 	/**
-	 * Parses the WXR file and prepares us for the task of processing parsed data
+	 * Parses the Kyero file and prepares us for the task of processing parsed data
 	 *
-	 * @param string $file Path to the WXR file for importing
+	 * @param string $file Path to the Kyero file for importing
 	 */
 	function import_start( $file ) {
 		if ( ! is_file( $file ) ) {
@@ -174,7 +174,7 @@ class Kyero_Import extends WP_Importer {
 	}
 
 	/**
-	 * Handles the WXR upload and initial parsing of the file to prepare for
+	 * Handles the Kyero upload and initial parsing of the file to prepare for
 	 * displaying author import options
 	 *
 	 * @return bool False if error uploading or invalid file, true otherwise
@@ -187,7 +187,21 @@ class Kyero_Import extends WP_Importer {
 			$filename    = wp_unique_filename( $upload_path, 'kyero.xml' );
 			$kyero_xml   = "$upload_path/$filename";
 
-			file_put_contents( $kyero_xml, file_get_contents( $import_url ) );
+			$sanitized_url = esc_url_raw( $import_url, array( 'http', 'https' ) );
+			$response = wp_remote_get( $sanitized_url );
+			$status = wp_remote_retrieve_response_code( $response );
+			$body = wp_remote_retrieve_body( $response );
+
+			if ( $status != 200 ) {
+				echo '<p><strong>' . __( 'Sorry, there has been an error while downloading feed.', 'import-kyero-feed' ) . '</strong><br />';
+				echo 'Feed: ' . esc_html( $sanitized_url ) . '<br />';
+				echo 'Status: ' . esc_html( $status ) . '<br/>';
+				echo 'Error: ' . esc_html( $body ) . '<br />';
+				echo '</p>';
+				return false;
+			}
+
+			file_put_contents( $kyero_xml, $body );
 
 			$upload_url  = wp_generate_uuid4();
 			$upload_type = 'text/xml';
@@ -248,12 +262,12 @@ class Kyero_Import extends WP_Importer {
 	}
 
 	/**
-	 * Retrieve authors from parsed WXR data
+	 * Retrieve authors from parsed Kyero data
 	 *
-	 * Uses the provided author information from WXR 1.1 files
-	 * or extracts info from each post for WXR 1.0 files
+	 * Uses the provided author information from Kyero 1.1 files
+	 * or extracts info from each post for Kyero 1.0 files
 	 *
-	 * @param array $import_data Data returned by a WXR parser
+	 * @param array $import_data Data returned by a Kyero parser
 	 */
 	function get_authors_from_import( $import_data ) {
 		if ( ! empty( $import_data['authors'] ) ) {
@@ -630,7 +644,7 @@ class Kyero_Import extends WP_Importer {
 	 *
 	 * @since 0.6.2
 	 *
-	 * @param array $term    Term data from WXR import.
+	 * @param array $term    Term data from Kyero import.
 	 * @param int   $term_id ID of the newly created term.
 	 */
 	protected function process_termmeta( $term, $term_id ) {
@@ -645,7 +659,7 @@ class Kyero_Import extends WP_Importer {
 		 *
 		 * @param array $termmeta Array of term meta.
 		 * @param int   $term_id  ID of the newly created term.
-		 * @param array $term     Term data from the WXR import.
+		 * @param array $term     Term data from the Kyero import.
 		 */
 		$term['termmeta'] = apply_filters( 'wp_import_term_meta', $term['termmeta'], $term_id, $term );
 
@@ -661,7 +675,7 @@ class Kyero_Import extends WP_Importer {
 			 *
 			 * @param string $meta_key Meta key.
 			 * @param int    $term_id  ID of the newly created term.
-			 * @param array  $term     Term data from the WXR import.
+			 * @param array  $term     Term data from the Kyero import.
 			 */
 			$key = apply_filters( 'import_term_meta_key', $meta['key'], $term_id, $term );
 			if ( ! $key ) {
@@ -849,7 +863,7 @@ class Kyero_Import extends WP_Importer {
 			if ( ! empty( $post['terms'] ) ) {
 				$terms_to_set = array();
 				foreach ( $post['terms'] as $term ) {
-					// back compat with WXR 1.0 map 'tag' to 'post_tag'
+					// back compat with Kyero 1.0 map 'tag' to 'post_tag'
 					$taxonomy    = ( 'tag' == $term['domain'] ) ? 'post_tag' : $term['domain'];
 					$term_exists = term_exists( $term['slug'], $taxonomy );
 					$term_id     = is_array( $term_exists ) ? $term_exists['term_id'] : $term_exists;
@@ -985,7 +999,7 @@ class Kyero_Import extends WP_Importer {
 	 * represents doesn't exist then the menu item will not be imported (waits until the
 	 * end of the import to retry again before discarding).
 	 *
-	 * @param array $item Menu item details from WXR file
+	 * @param array $item Menu item details from Kyero file
 	 */
 	function process_menu_item( $item ) {
 		// skip draft, orphaned menu items
@@ -1072,7 +1086,7 @@ class Kyero_Import extends WP_Importer {
 	/**
 	 * If fetching attachments is enabled then attempt to create a new attachment
 	 *
-	 * @param array $post Attachment post details from WXR
+	 * @param array $post Attachment post details from Kyero
 	 * @param string $url URL to fetch attachment from
 	 * @return int|WP_Error Post ID on success, WP_Error otherwise
 	 */
@@ -1381,10 +1395,10 @@ class Kyero_Import extends WP_Importer {
 	}
 
 	/**
-	 * Parse a WXR file
+	 * Parse a Kyero file
 	 *
-	 * @param string $file Path to WXR file for parsing
-	 * @return array Information gathered from the WXR file
+	 * @param string $file Path to Kyero file for parsing
+	 * @return array Information gathered from the Kyero file
 	 */
 	function parse( $file ) {
 		$parser = new Kyero_Parser();

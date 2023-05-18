@@ -23,11 +23,11 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/malformed.xml';
 
 		// Regex based parser cannot detect malformed XML.
-		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML' ) as $p ) {
+		foreach ( array( 'Kyero_Parser' ) as $p ) {
 			$parser = new $p;
 			$result = $parser->parse( $file );
 			$this->assertWPError( $result );
-			$this->assertSame( 'There was an error when reading this WXR file', $result->get_error_message() );
+			$this->assertSame( 'There was an error when reading this Kyero file', $result->get_error_message() );
 		}
 	}
 
@@ -35,12 +35,12 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 		$f1 = DIR_TESTDATA_KYERO_IMPORTER . '/missing-version-tag.xml';
 		$f2 = DIR_TESTDATA_KYERO_IMPORTER . '/invalid-version-tag.xml';
 
-		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser' ) as $p ) {
 			foreach ( array( $f1, $f2 ) as $file ) {
 				$parser = new $p;
 				$result = $parser->parse( $file );
 				$this->assertWPError( $result );
-				$this->assertSame( 'This does not appear to be a WXR file, missing/invalid WXR version number', $result->get_error_message() );
+				$this->assertSame( 'This does not appear to be a Kyero file, missing/invalid Kyero version number', $result->get_error_message() );
 			}
 		}
 	}
@@ -48,7 +48,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_wxr_version_1_1() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/valid-wxr-1.1.xml';
 
-		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser' ) as $p ) {
 			$message = $p . ' failed';
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -141,7 +141,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_wxr_version_1_0() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/valid-wxr-1.0.xml';
 
-		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser' ) as $p ) {
 			$message = $p . ' failed';
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -230,7 +230,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_blank_lines_in_content() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/post-content-blank-lines.xml';
 
-		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser' ) as $p ) {
 			$message = $p . ' failed and is missing blank lines';
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -244,7 +244,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_varied_taxonomy_term_spacing() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/term-formats.xml';
 
-		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser' ) as $p ) {
 			$message = $p . ' failed';
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -264,7 +264,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	}
 
 	/**
-	 * Test the WXR parser's ability to correctly retrieve content from CDATA
+	 * Test the Kyero parser's ability to correctly retrieve content from CDATA
 	 * sections that contain escaped closing tags ("]]>" -> "]]]]><![CDATA[>").
 	 *
 	 * @link https://core.trac.wordpress.org/ticket/15203
@@ -272,7 +272,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	function test_escaped_cdata_closing_sequence() {
 		$file = DIR_TESTDATA_KYERO_IMPORTER . '/crazy-cdata-escaped.xml';
 
-		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser' ) as $p ) {
 			$message = 'Parser ' . $p;
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -299,36 +299,6 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 	}
 
 	/**
-	 * Ensure that the regex parser can still parse invalid CDATA blocks (i.e. those
-	 * with "]]>" unescaped within a CDATA section).
-	 */
-	function test_unescaped_cdata_closing_sequence() {
-		$file = DIR_TESTDATA_KYERO_IMPORTER . '/crazy-cdata.xml';
-
-		$parser = new WXR_Parser_Regex;
-		$result = $parser->parse( $file );
-
-		$post = $result['posts'][0];
-		$this->assertSame( 'Content with nested <![CDATA[ tags ]]> :)', $post['post_content'] );
-		foreach ( $post['postmeta'] as $meta ) {
-			switch ( $meta['key'] ) {
-				case 'Plain string':
-					$value = 'Foo';
-					break;
-				case 'Closing CDATA':
-					$value = ']]>';
-					break;
-				case 'Alot of CDATA':
-					$value = 'This has <![CDATA[ opening and ]]> closing <![CDATA[ tags like this: ]]>';
-					break;
-				default:
-					$this->fail( 'Unknown postmeta (' . $meta['key'] . ') was parsed out by' . $p );
-			}
-			$this->assertSame( $value, $meta['value'] );
-		}
-	}
-
-	/**
 	 * @group term-meta
 	 */
 	function test_term_meta_parsing() {
@@ -345,7 +315,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 			),
 		);
 
-		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser' ) as $p ) {
 			$message = 'Parser ' . $p;
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
@@ -388,7 +358,7 @@ class Tests_Import_Parser extends WP_Import_UnitTestCase {
 			),
 		);
 
-		foreach ( array( 'Kyero_Parser', 'WXR_Parser_XML', 'WXR_Parser_Regex' ) as $p ) {
+		foreach ( array( 'Kyero_Parser' ) as $p ) {
 			$message = 'Parser ' . $p;
 			$parser  = new $p;
 			$result  = $parser->parse( $file );
