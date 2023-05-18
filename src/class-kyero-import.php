@@ -78,7 +78,7 @@ class Kyero_Import extends WP_Importer {
 
 		$this->handle_upload( $import_url );
 		$this->fetch_attachments = $fetch_attachments;
-		$this->authors['kyero'] = array(
+		$this->authors['kyero']  = array(
 			'author_login'        => $login,
 			'author_display_name' => 'Auto-created ' . $login,
 		);
@@ -183,14 +183,14 @@ class Kyero_Import extends WP_Importer {
 
 		if ( $import_url ) {
 
-			$upload_path = wp_upload_dir()['path'];
-			$filename    = wp_unique_filename( $upload_path, 'kyero.xml' );
-			$kyero_xml   = "$upload_path/$filename";
+			$upload_path  = wp_upload_dir()['path'];
+			$filename     = wp_unique_filename( $upload_path, 'kyero.xml' );
+			$kyero_file   = "$upload_path/$filename";
 
 			$sanitized_url = esc_url_raw( $import_url, array( 'http', 'https' ) );
-			$response = wp_remote_get( $sanitized_url );
-			$status = wp_remote_retrieve_response_code( $response );
-			$body = wp_remote_retrieve_body( $response );
+			$response      = wp_remote_get( $sanitized_url );
+			$status        = wp_remote_retrieve_response_code( $response );
+			$body          = wp_remote_retrieve_body( $response );
 
 			if ( 200 != $status ) {
 				echo '<p><strong>' . __( 'Sorry, there has been an error while downloading feed.', 'import-kyero-feed' ) . '</strong><br />';
@@ -201,14 +201,13 @@ class Kyero_Import extends WP_Importer {
 				return false;
 			}
 
-			file_put_contents( $kyero_xml, $body );
+			file_put_contents( $kyero_file, $body );
 
 			$upload_url  = wp_generate_uuid4();
 			$upload_type = 'text/xml';
-			$upload_file = $kyero_xml;
 
 			$object = array(
-				'post_title'     => wp_basename( $upload_file ),
+				'post_title'     => wp_basename( $kyero_file ),
 				'post_content'   => $upload_url,
 				'post_mime_type' => $upload_type,
 				'guid'           => $upload_url,
@@ -216,13 +215,13 @@ class Kyero_Import extends WP_Importer {
 				'post_status'    => 'private',
 			);
 
-			$id = wp_insert_attachment( $object, $upload_file );
+			$id = wp_insert_attachment( $object, $kyero_file );
 
 			wp_schedule_single_event( time() + DAY_IN_SECONDS, 'importer_scheduled_cleanup', array( $id ) );
 
 			$file = array(
 				'id'   => $id,
-				'file' => $upload_file,
+				'file' => $kyero_file,
 			);
 
 		} else {
