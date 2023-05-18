@@ -72,13 +72,13 @@ class Kyero_Import extends WP_Importer {
 
 	function run( $import_url, $login = 'admin', $fetch_attachments = true, $time_limit = 3600 ) {
 		if ( ! $import_url ) {
-			echo __('Cannot run without a feed', 'import-kyero-feed');
+			echo __( 'Cannot run without a feed', 'import-kyero-feed' );
 			return;
 		}
 
 		$this->handle_upload( $import_url );
 		$this->fetch_attachments = $fetch_attachments;
-		$this->authors[ 'kyero' ] = array(
+		$this->authors['kyero'] = array(
 			'author_login'        => $login,
 			'author_display_name' => 'Auto-created ' . $login,
 		);
@@ -192,7 +192,7 @@ class Kyero_Import extends WP_Importer {
 			$status = wp_remote_retrieve_response_code( $response );
 			$body = wp_remote_retrieve_body( $response );
 
-			if ( $status != 200 ) {
+			if ( 200 != $status ) {
 				echo '<p><strong>' . __( 'Sorry, there has been an error while downloading feed.', 'import-kyero-feed' ) . '</strong><br />';
 				echo 'Feed: ' . esc_html( $sanitized_url ) . '<br />';
 				echo 'Status: ' . esc_html( $status ) . '<br/>';
@@ -226,7 +226,7 @@ class Kyero_Import extends WP_Importer {
 			);
 
 		} else {
-			$file = wp_import_handle_upload( );
+			$file = wp_import_handle_upload();
 
 			if ( isset( $file['error'] ) ) {
 				echo '<p><strong>' . __( 'Sorry, there has been an error.', 'import-kyero-feed' ) . '</strong><br />';
