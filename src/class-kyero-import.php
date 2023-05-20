@@ -1534,7 +1534,7 @@ class Kyero_Import extends WP_Importer {
 			$item = $value[ $i ];
 			if ( is_string( $item ) ) {
 				$value[ $i ] = sanitize_user( $item );
-			} else if ( ! is_int( $item ) ) {
+			} elseif ( ! is_int( $item ) ) {
 				$value[ $i ] = null;
 			}
 		}
