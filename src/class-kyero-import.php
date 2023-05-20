@@ -65,9 +65,9 @@ class Kyero_Import extends WP_Importer {
 				set_time_limit( 0 );
 				$this->import(
 					$file,
-					sanitize_user_map( $_POST['imported_authors'] ),
-					sanitize_user_map( $_POST['user_map'] ),
-					sanitize_user_map( $_POST['user_new'] )
+					$this->sanitize_user_map( $_POST['imported_authors'] ),
+					$this->sanitize_user_map( $_POST['user_map'] ),
+					$this->sanitize_user_map( $_POST['user_new'] )
 				);
 				break;
 		}
