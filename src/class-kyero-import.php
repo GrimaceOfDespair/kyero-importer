@@ -63,7 +63,12 @@ class Kyero_Import extends WP_Importer {
 				$this->id                = (int) $_POST['import_id'];
 				$file                    = get_attached_file( $this->id );
 				set_time_limit( 0 );
-				$this->import( $file, $_POST['imported_authors'], $_POST['user_map'] );
+				$this->import(
+					$file,
+					sanitize_user_map( $_POST['imported_authors'] ),
+					sanitize_user_map( $_POST['user_map'] ),
+					sanitize_user_map( $_POST['user_new'] )
+				);
 				break;
 		}
 
@@ -1516,6 +1521,23 @@ class Kyero_Import extends WP_Importer {
 	// return the difference in length between two strings
 	function cmpr_strlen( $a, $b ) {
 		return strlen( $b ) - strlen( $a );
+	}
+
+	// Sanitize a POSTed array
+	function sanitize_user_map( $value ) {
+		if ( ! is_array( $value ) ) {
+			return array();
+		}
+
+		// Make sure every entry is either a valid username or an id
+		for ( $i = 0; $i < count( $value ); $i++ ) {
+			$item = $value[ $i ];
+			if ( is_string( $item ) ) {
+				$value[ $i ] = sanitize_user( $item );
+			} else if ( ! is_int( $item ) ) {
+				$value[ $i ] = null;
+			}
+		}
 	}
 
 	/**
