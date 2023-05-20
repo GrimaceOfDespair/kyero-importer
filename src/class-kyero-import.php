@@ -404,7 +404,7 @@ class Kyero_Import extends WP_Importer {
 			)
 		);
 
-		echo '<input type="hidden" name="imported_authors[' . $n . ']" value="' . esc_attr( $author['author_login'] ) . '" />';
+		echo '<input type="hidden" name="imported_authors[' . esc_attr( $n ) . ']" value="' . esc_attr( $author['author_login'] ) . '" />';
 
 		if ( '1.0' != $this->version ) {
 			echo '</div>';
@@ -455,7 +455,7 @@ class Kyero_Import extends WP_Importer {
 				} else {
 					printf( __( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'import-kyero-feed' ), esc_html( $this->authors[ $old_login ]['author_display_name'] ) );
 					if ( defined( 'IKYF_DEBUG' ) && IKYF_DEBUG ) {
-						echo ' ' . $user_id->get_error_message();
+						echo ' ' . esc_html( $user_id->get_error_message() );
 					}
 					echo '<br />';
 				}
@@ -514,7 +514,7 @@ class Kyero_Import extends WP_Importer {
 			} else {
 				printf( __( 'Failed to import category %s', 'import-kyero-feed' ), esc_html( $cat['category_nicename'] ) );
 				if ( defined( 'IKYF_DEBUG' ) && IKYF_DEBUG ) {
-					echo ': ' . $id->get_error_message();
+					echo ': ' . esc_html( $id->get_error_message() );
 				}
 				echo '<br />';
 				continue;
