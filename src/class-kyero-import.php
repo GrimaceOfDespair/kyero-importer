@@ -325,7 +325,7 @@ class Kyero_Import extends WP_Importer {
 		?>
 <form action="<?php echo admin_url( 'admin.php?import=kyero&amp;step=2' ); ?>" method="post">
 	<?php wp_nonce_field( 'import-kyero' ); ?>
-	<input type="hidden" name="import_id" value="<?php echo $this->id; ?>" />
+	<input type="hidden" name="import_id" value="<?php esc_attr_e( $this->id ); ?>" />
 	<h3><?php _e( 'Properties', 'import-kyero-feed' ); ?></h3>
 	<p><?php printf( __( '%s properties with %s images found' ), $property_count, $image_count ); ?></p>
 
@@ -390,7 +390,7 @@ class Kyero_Import extends WP_Importer {
 			echo ' <input type="text" id="user_new_' . esc_attr( $n ) . '" name="user_new[' . esc_attr( $n ) . ']" value="' . $value . '" /><br />';
 		}
 
-		echo '<label for="imported_authors_' . $n . '">';
+		echo '<label for="imported_authors_' . esc_attr( $n ) . '">';
 		if ( ! $create_users && '1.0' == $this->version ) {
 			_e( 'assign posts to an existing user:', 'import-kyero-feed' );
 		} else {
@@ -570,7 +570,7 @@ class Kyero_Import extends WP_Importer {
 			} else {
 				printf( __( 'Failed to import post tag %s', 'import-kyero-feed' ), esc_html( $tag['tag_name'] ) );
 				if ( defined( 'IKYF_DEBUG' ) && IKYF_DEBUG ) {
-					echo ': ' . $id->get_error_message();
+					echo ': ' . esc_html( $id->get_error_message() );
 				}
 				echo '<br />';
 				continue;
@@ -631,7 +631,7 @@ class Kyero_Import extends WP_Importer {
 			} else {
 				printf( __( 'Failed to import %1$s %2$s', 'import-kyero-feed' ), esc_html( $term['term_taxonomy'] ), esc_html( $term['term_name'] ) );
 				if ( defined( 'IKYF_DEBUG' ) && IKYF_DEBUG ) {
-					echo ': ' . $id->get_error_message();
+					echo ': ' . esc_html( $id->get_error_message() );
 				}
 				echo '<br />';
 				continue;
@@ -843,7 +843,7 @@ class Kyero_Import extends WP_Importer {
 						esc_html( $post['post_title'] )
 					);
 					if ( defined( 'IKYF_DEBUG' ) && IKYF_DEBUG ) {
-						echo ': ' . $post_id->get_error_message();
+						echo ': ' . esc_html( $post_id->get_error_message() );
 					}
 					echo '<br />';
 					continue;
@@ -879,7 +879,7 @@ class Kyero_Import extends WP_Importer {
 						} else {
 							printf( __( 'Failed to import %1$s %2$s', 'import-kyero-feed' ), esc_html( $taxonomy ), esc_html( $term['name'] ) );
 							if ( defined( 'IKYF_DEBUG' ) && IKYF_DEBUG ) {
-								echo ': ' . $t->get_error_message();
+								echo ': ' . esc_html( $t->get_error_message() );
 							}
 							echo '<br />';
 							do_action( 'wp_import_insert_term_failed', $t, $term, $post_id, $post );
