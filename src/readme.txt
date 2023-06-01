@@ -5,7 +5,7 @@ Tags: importer, wordpress, kyero
 Requires at least: 5.2
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 0.1
+Stable tag: 1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Import Easy Real Estate properties and images from a kyero feed.
 
 == Description ==
 
-The Import Kyero Feed will import Properties from a Kyero feed into Easy Real Estate.
+The Import Kyero Feed plugin will import Properties from a Kyero feed into Easy Real Estate.
 
 Images are downloaded and attached to the property.
 
@@ -36,7 +36,7 @@ If you would prefer to do things manually then follow these instructions:
 
 == Changelog ==
 
-= 0.1 =
+= 1.O =
 * Initial release
 
 == Frequently Asked Questions ==
